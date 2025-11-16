@@ -1,42 +1,16 @@
+// Copyright 2025 Swapnil Ingle
+//
+// Licensed under the MIT License. See LICENSE file for details.
+
 package auth
 
 import (
+	"Quazaar/models"
 	"encoding/json"
 	"log"
 	"net/http"
 	"time"
 )
-
-// RegisterRequest is the payload for user registration
-type RegisterRequest struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
-
-// LoginRequest is the payload for user login
-type LoginRequest struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
-
-// TokenRequest is the payload for creating a token
-type TokenRequest struct {
-	Name     string `json:"name"`           // Token name (e.g., "Mobile App")
-	Service  string `json:"service"`        // Service name (e.g., "websocket")
-	Duration int    `json:"duration_hours"` // Duration in hours (0 = never expires)
-}
-
-// TokenResponse is the response when creating/listing tokens
-type TokenResponse struct {
-	ID        int        `json:"id"`
-	Name      string     `json:"name"`
-	Token     string     `json:"token"`
-	Service   string     `json:"service"`
-	ExpiresAt *time.Time `json:"expires_at"`
-	CreatedAt time.Time  `json:"created_at"`
-	LastUsed  *time.Time `json:"last_used"`
-	Active    bool       `json:"active"`
-}
 
 // min helper function
 func min(a, b int) int {
@@ -53,7 +27,7 @@ func HandleRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var req RegisterRequest
+	var req models.RegisterRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
@@ -96,7 +70,7 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var req LoginRequest
+	var req models.LoginRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
@@ -159,7 +133,7 @@ func HandleCreateToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var req TokenRequest
+	var req models.TokenRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
@@ -188,7 +162,7 @@ func HandleCreateToken(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(TokenResponse{
+	json.NewEncoder(w).Encode(models.TokenResponse{
 		ID:        newToken.ID,
 		Name:      newToken.Name,
 		Token:     newToken.Token,
@@ -230,9 +204,9 @@ func HandleListTokens(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var response []TokenResponse
+	var response []models.TokenResponse
 	for _, t := range tokens {
-		response = append(response, TokenResponse{
+		response = append(response, models.TokenResponse{
 			ID:        t.ID,
 			Name:      t.Name,
 			Token:     t.Token,
