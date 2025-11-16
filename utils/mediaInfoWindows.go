@@ -12,21 +12,21 @@ import (
 
 // WindowsMediaInfo represents media information retrieved via Windows APIs
 type WindowsMediaInfo struct {
-	Title       string
-	Artist      string
-	Album       string
-	AlbumArt    string
-	Position    int64  // in milliseconds
-	Length      int64  // in milliseconds
-	Status      string // Playing, Paused, Stopped
-	Player      string
-	PlayerName  string
-	CanPlay     bool
-	CanPause    bool
+	Title         string
+	Artist        string
+	Album         string
+	AlbumArt      string
+	Position      int64  // in milliseconds
+	Length        int64  // in milliseconds
+	Status        string // Playing, Paused, Stopped
+	Player        string
+	PlayerName    string
+	CanPlay       bool
+	CanPause      bool
 	CanGoPrevious bool
-	CanGoNext   bool
-	CanSeek     bool
-	Metadata    map[string]string
+	CanGoNext     bool
+	CanSeek       bool
+	Metadata      map[string]string
 }
 
 // GetPlayerInfoViaWindows retrieves media info using Windows APIs
