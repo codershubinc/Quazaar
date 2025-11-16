@@ -65,9 +65,9 @@ func createTables() error {
 	userTable := `
 	CREATE TABLE IF NOT EXISTS users (
 		id INTEGER PRIMARY KEY CHECK (id = 1),
-		username TEXT NOT NULL UNIQUE,
-		password_hash TEXT NOT NULL,
-		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+		name TEXT NOT NULL UNIQUE,
+		pass TEXT NOT NULL,
+		username TEXT NOT NULL UNIQUE
 	);`
 
 	// Table 2: Tokens for different services/devices
@@ -75,13 +75,10 @@ func createTables() error {
 	tokensTable := `
 	CREATE TABLE IF NOT EXISTS tokens (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		name TEXT NOT NULL,
+		tokenOf TEXT NOT NULL,
+		tokenType TEXT NOT NULL,
 		token TEXT NOT NULL UNIQUE,
-		service TEXT,
-		expires_at DATETIME,
-		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-		last_used DATETIME,
-		active BOOLEAN DEFAULT TRUE
+		expiry NUMERIC
 	);`
 
 	// Execute users table creation
@@ -101,7 +98,7 @@ func createTables() error {
 	// Create indexes for faster searches
 	indexSQL := `
 	CREATE INDEX IF NOT EXISTS idx_tokens_token ON tokens(token);
-	CREATE INDEX IF NOT EXISTS idx_tokens_active ON tokens(active);
+	CREATE INDEX IF NOT EXISTS idx_tokens_type ON tokens(tokenType);
 	`
 
 	if _, err := DB.Exec(indexSQL); err != nil {
