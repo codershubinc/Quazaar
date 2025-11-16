@@ -1,6 +1,7 @@
-package utils
+package system
 
 import (
+	"Quazaar/pkg/helpers"
 	"fmt"
 	"os"
 	"strconv"
@@ -31,7 +32,7 @@ var (
 // GetWiFiInfo returns current WiFi connection info and network speed
 func GetWiFiInfo() (*WiFiInfo, error) {
 	// Get active WiFi connection using nmcli
-	output, err := SpawnProcess("nmcli", []string{"-t", "-f", "ACTIVE,SSID,SIGNAL,FREQ,DEVICE", "dev", "wifi"})
+	output, err := helpers.SpawnProcess("nmcli", []string{"-t", "-f", "ACTIVE,SSID,SIGNAL,FREQ,DEVICE", "dev", "wifi"})
 	if err != nil {
 		return nil, err
 	}
@@ -130,7 +131,7 @@ func getCurrentNetworkSpeed(interfaceName string) (float64, float64) {
 // getConnectionDetails retrieves additional WiFi connection details like security, IP, and link speed
 func getConnectionDetails(info *WiFiInfo) {
 	// Get active connection name and details using nmcli
-	connOutput, err := SpawnProcess("nmcli", []string{"-t", "-f", "NAME,DEVICE", "connection", "show", "--active"})
+	connOutput, err := helpers.SpawnProcess("nmcli", []string{"-t", "-f", "NAME,DEVICE", "connection", "show", "--active"})
 	if err != nil {
 		return
 	}
@@ -150,7 +151,7 @@ func getConnectionDetails(info *WiFiInfo) {
 	}
 
 	// Get detailed connection info
-	detailOutput, err := SpawnProcess("nmcli", []string{"-t", "-f", "802-11-wireless-security.key-mgmt,IP4.ADDRESS,GENERAL.DEVICE", "connection", "show", connectionName})
+	detailOutput, err := helpers.SpawnProcess("nmcli", []string{"-t", "-f", "802-11-wireless-security.key-mgmt,IP4.ADDRESS,GENERAL.DEVICE", "connection", "show", connectionName})
 	if err == nil {
 		detailLines := strings.Split(strings.TrimSpace(string(detailOutput)), "\n")
 		for _, line := range detailLines {
@@ -178,7 +179,7 @@ func getConnectionDetails(info *WiFiInfo) {
 	}
 
 	// Get link speed using iw command
-	iwOutput, err := SpawnProcess("iw", []string{"dev", info.InterfaceName, "link"})
+	iwOutput, err := helpers.SpawnProcess("iw", []string{"dev", info.InterfaceName, "link"})
 	if err == nil {
 		iwLines := strings.Split(string(iwOutput), "\n")
 		for _, line := range iwLines {

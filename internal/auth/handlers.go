@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"Quazaar/models"
+	"Quazaar/pkg/models"
 	"encoding/json"
 	"log"
 	"net/http"

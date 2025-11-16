@@ -5,7 +5,8 @@
 package player
 
 import (
-	"Quazaar/utils"
+	"Quazaar/pkg/helpers"
+	"Quazaar/internal/media"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -20,7 +21,7 @@ func HandleGetPlayerInfo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	info, err := utils.GetPlayerInfoViaDBusWithFallback()
+	info, err := media.GetPlayerInfoViaDBusWithFallback()
 	if err != nil {
 		log.Printf("❌ Failed to get player info: %v", err)
 		w.Header().Set("Content-Type", "application/json")
@@ -53,12 +54,12 @@ func HandleGetPlayerInfoDBus(w http.ResponseWriter, r *http.Request) {
 	// Check for player query parameter
 	playerParam := r.URL.Query().Get("player")
 
-	var info utils.DBusMediaInfo
+	var info media.DBusMediaInfo
 	var err error
 
 	if playerParam != "" {
 		// Get info for specific player
-		info, err = utils.GetPlayerInfoViaDBusForPlayer(playerParam)
+		info, err = media.GetPlayerInfoViaDBusForPlayer(playerParam)
 		if err != nil {
 			log.Printf("❌ D-Bus player info failed for %s: %v", playerParam, err)
 			w.Header().Set("Content-Type", "application/json")
@@ -72,7 +73,7 @@ func HandleGetPlayerInfoDBus(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		// Get info for first available player (original behavior)
-		info, err = utils.GetPlayerInfoViaDBus()
+		info, err = media.GetPlayerInfoViaDBus()
 		if err != nil {
 			log.Printf("❌ D-Bus player info failed: %v", err)
 			w.Header().Set("Content-Type", "application/json")
@@ -101,7 +102,7 @@ func HandleGetActivePlayers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	players, err := utils.GetAllActivePlayers()
+	players, err := media.GetAllActivePlayers()
 	if err != nil {
 		log.Printf("❌ Failed to get active players: %v", err)
 		w.Header().Set("Content-Type", "application/json")
@@ -130,7 +131,7 @@ func HandleGetMPRISPlayers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	players, err := utils.GetMPRISPlayers()
+	players, err := media.GetMPRISPlayers()
 	if err != nil {
 		log.Printf("❌ Failed to get MPRIS players: %v", err)
 		w.Header().Set("Content-Type", "application/json")
@@ -160,7 +161,7 @@ func HandlePlayPause(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err := utils.SpawnProcess("playerctl", []string{"play-pause"})
+	_, err := helpers.SpawnProcess("playerctl", []string{"play-pause"})
 	if err != nil {
 		log.Printf("❌ Play/Pause failed: %v", err)
 		w.Header().Set("Content-Type", "application/json")
@@ -188,7 +189,7 @@ func HandleNext(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err := utils.SpawnProcess("playerctl", []string{"next"})
+	_, err := helpers.SpawnProcess("playerctl", []string{"next"})
 	if err != nil {
 		log.Printf("❌ Next track failed: %v", err)
 		w.Header().Set("Content-Type", "application/json")
@@ -216,7 +217,7 @@ func HandlePrevious(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err := utils.SpawnProcess("playerctl", []string{"previous"})
+	_, err := helpers.SpawnProcess("playerctl", []string{"previous"})
 	if err != nil {
 		log.Printf("❌ Previous track failed: %v", err)
 		w.Header().Set("Content-Type", "application/json")
@@ -244,7 +245,7 @@ func HandlePlay(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err := utils.SpawnProcess("playerctl", []string{"play"})
+	_, err := helpers.SpawnProcess("playerctl", []string{"play"})
 	if err != nil {
 		log.Printf("❌ Play failed: %v", err)
 		w.Header().Set("Content-Type", "application/json")
@@ -272,7 +273,7 @@ func HandlePause(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err := utils.SpawnProcess("playerctl", []string{"pause"})
+	_, err := helpers.SpawnProcess("playerctl", []string{"pause"})
 	if err != nil {
 		log.Printf("❌ Pause failed: %v", err)
 		w.Header().Set("Content-Type", "application/json")
@@ -300,7 +301,7 @@ func HandleGetPlayerInfoWindows(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	info, err := utils.GetPlayerInfoViaWindowsWithFallback()
+	info, err := media.GetPlayerInfoViaWindowsWithFallback()
 	if err != nil {
 		log.Printf("❌ Failed to get Windows player info: %v", err)
 		w.Header().Set("Content-Type", "application/json")
@@ -328,7 +329,7 @@ func HandleGetWindowsActivePlayers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	players, err := utils.GetWindowsActivePlayers()
+	players, err := media.GetWindowsActivePlayers()
 	if err != nil {
 		log.Printf("❌ Failed to get Windows active players: %v", err)
 		w.Header().Set("Content-Type", "application/json")
@@ -366,9 +367,9 @@ func HandleGetPlayerInfoByPlayer(w http.ResponseWriter, r *http.Request) {
 
 	// Try Windows-specific method first (for Windows builds)
 	if runtime.GOOS == "windows" {
-		info, err := utils.GetWindowsMediaInfoByPlayer(playerParam)
+		info, err := media.GetWindowsMediaInfoByPlayer(playerParam)
 		if err == nil && info.Title != "" {
-			mediaInfo := utils.ConvertWindowsMediaToMediaInfo(info)
+			mediaInfo := media.ConvertWindowsMediaToMediaInfo(info)
 			w.Header().Set("Content-Type", "application/json")
 			json.NewEncoder(w).Encode(map[string]interface{}{
 				"success": true,
@@ -380,9 +381,9 @@ func HandleGetPlayerInfoByPlayer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Fallback to D-Bus method (for Linux builds)
-	dbusInfo, err := utils.GetPlayerInfoViaDBus()
+	dbusInfo, err := media.GetPlayerInfoViaDBus()
 	if err == nil && dbusInfo.Title != "" {
-		mediaInfo := utils.ConvertDBusMediaToMediaInfo(dbusInfo)
+		mediaInfo := media.ConvertDBusMediaToMediaInfo(dbusInfo)
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{
 			"success": true,

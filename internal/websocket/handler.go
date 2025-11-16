@@ -5,8 +5,8 @@
 package websocket
 
 import (
-	"Quazaar/models"
-	"Quazaar/utils/player"
+	"Quazaar/pkg/models"
+	"Quazaar/internal/player"
 	"fmt"
 	"log"
 	"net/http"

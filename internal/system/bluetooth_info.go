@@ -1,6 +1,7 @@
-package utils
+package system
 
 import (
+	"Quazaar/pkg/helpers"
 	"fmt"
 	"regexp"
 	"strings"
@@ -20,7 +21,7 @@ type BluetoothDevice struct {
 // GetBluetoothDevices returns a list of connected Bluetooth devices with battery info
 func GetBluetoothDevices() ([]BluetoothDevice, error) {
 	// Get list of connected devices
-	output, err := SpawnProcess("bluetoothctl", []string{"devices", "Connected"})
+	output, err := helpers.SpawnProcess("bluetoothctl", []string{"devices", "Connected"})
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +57,7 @@ func GetBluetoothDevices() ([]BluetoothDevice, error) {
 		}
 
 		// Get detailed info for this device
-		infoOutput, err := SpawnProcess("bluetoothctl", []string{"info", mac})
+		infoOutput, err := helpers.SpawnProcess("bluetoothctl", []string{"info", mac})
 		if err == nil {
 			infoStr := string(infoOutput)
 
@@ -140,7 +141,7 @@ func parseGalaxyBudsBattery(device *BluetoothDevice, infoStr string) {
 func tryGalaxyBudsTools(device *BluetoothDevice, mac string) {
 	// Try GalaxyBudsClient CLI if available (https://github.com/ThePBone/GalaxyBudsClient)
 	// Install: yay -S galaxybudsclient-bin
-	output, err := SpawnProcess("galaxybudsclient", []string{"--address", mac, "--get-battery"})
+	output, err := helpers.SpawnProcess("galaxybudsclient", []string{"--address", mac, "--get-battery"})
 	if err == nil {
 		parseGalaxyBudsClientOutput(device, string(output))
 		return
@@ -186,7 +187,7 @@ func tryDBusBatteryRead(device *BluetoothDevice, mac string) {
 	dbusPath := strings.ReplaceAll(mac, ":", "_")
 
 	// Query all battery devices
-	output, err := SpawnProcess("dbus-send", []string{
+	output, err := helpers.SpawnProcess("dbus-send", []string{
 		"--system",
 		"--print-reply",
 		"--dest=org.bluez",

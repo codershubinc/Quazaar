@@ -1,7 +1,9 @@
-package utils
+package system
+
+import "Quazaar/pkg/helpers"
 
 func LaunchApp(appName string) (string, error) {
-	output, err := SpawnProcess(
+	output, err := helpers.SpawnProcess(
 		`gtk-launch`,
 		[]string{appName},
 	)

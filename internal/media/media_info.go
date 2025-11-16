@@ -2,9 +2,10 @@
 //
 // Licensed under the MIT License. See LICENSE file for details.
 
-package utils
+package media
 
 import (
+	"Quazaar/pkg/helpers"
 	"fmt"
 	"strings"
 )
@@ -20,10 +21,29 @@ type MediaInfo struct {
 	Player   string
 }
 
+// WindowsMediaInfo represents media information retrieved via Windows APIs
+type WindowsMediaInfo struct {
+	Title         string
+	Artist        string
+	Album         string
+	AlbumArt      string
+	Position      int64  // in milliseconds
+	Length        int64  // in milliseconds
+	Status        string // Playing, Paused, Stopped
+	Player        string
+	PlayerName    string
+	CanPlay       bool
+	CanPause      bool
+	CanGoPrevious bool
+	CanGoNext     bool
+	CanSeek       bool
+	Metadata      map[string]string
+}
+
 func GetPlayerInfo() (MediaInfo, error) {
 	// Run one command to get everything: title, artwork, artist, album, position, length, status, player name
 	// Format: title|||artUrl|||artist|||album|||position|||length|||status|||playerName
-	output, err := SpawnProcess(
+	output, err := helpers.SpawnProcess(
 		`playerctl`,
 		[]string{"metadata", `--format`, `{{title}}|||{{mpris:artUrl}}|||{{artist}}|||{{album}}|||{{position}}|||{{mpris:length}}|||{{status}}|||{{playerName}}`})
 	if err != nil {
@@ -62,7 +82,7 @@ func GetPlayerInfo() (MediaInfo, error) {
 
 func GetAllActivePlayers() ([]string, error) {
 	// Run playerctl to get the list of all active players
-	output, err := SpawnProcess(
+	output, err := helpers.SpawnProcess(
 		`playerctl`,
 		[]string{"-l"},
 	)

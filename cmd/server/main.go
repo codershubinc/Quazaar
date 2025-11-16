@@ -5,10 +5,10 @@
 package main
 
 import (
-	"Quazaar/utils/auth"
-	"Quazaar/utils/db"
-	"Quazaar/utils/poller"
-	"Quazaar/utils/websocket"
+	"Quazaar/internal/auth"
+	"Quazaar/internal/db"
+	"Quazaar/internal/poller"
+	"Quazaar/internal/websocket"
 	"fmt"
 	"log"
 	"net/http"

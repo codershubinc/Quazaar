@@ -1,7 +1,7 @@
 package websocket
 
 import (
-	"Quazaar/models"
+	"Quazaar/pkg/models"
 	"log"
 	"net/http"
 

@@ -5,9 +5,9 @@
 package poller
 
 import (
-	"Quazaar/models"
-	"Quazaar/utils"
-	"Quazaar/utils/websocket"
+	"Quazaar/pkg/models"
+	"Quazaar/internal/media"
+	"Quazaar/internal/websocket"
 	"fmt"
 	"time"
 )
@@ -16,7 +16,7 @@ func Handle() {
 	// fmt.Println("Started poller Handler ....")
 
 	Poller(1*time.Second, make(chan struct{}), func() {
-		msg, err := utils.GetPlayerInfo()
+		msg, err := media.GetPlayerInfo()
 
 		if err != nil {
 			fmt.Printf("⚠️ Failed to get player info: %v\n", err)

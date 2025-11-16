@@ -1,4 +1,4 @@
-package utils
+package media
 
 import (
 	"crypto/md5"

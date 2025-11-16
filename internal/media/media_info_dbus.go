@@ -2,9 +2,10 @@
 //
 // Licensed under the MIT License. See LICENSE file for details.
 
-package utils
+package media
 
 import (
+	"Quazaar/pkg/helpers"
 	"fmt"
 	"regexp"
 	"strings"
@@ -99,7 +100,7 @@ func GetPlayerInfoViaDBusForPlayer(playerService string) (DBusMediaInfo, error) 
 
 // GetMPRISPlayers retrieves list of available MPRIS players from D-Bus
 func GetMPRISPlayers() ([]string, error) {
-	output, err := SpawnProcess("dbus-send", []string{
+	output, err := helpers.SpawnProcess("dbus-send", []string{
 		"--session",
 		"--print-reply",
 		"--dest=org.freedesktop.DBus",
@@ -131,7 +132,7 @@ func GetMPRISPlayers() ([]string, error) {
 
 // GetMPRISProperties retrieves properties from a specific MPRIS player
 func GetMPRISProperties(playerService string) (string, error) {
-	output, err := SpawnProcess("dbus-send", []string{
+	output, err := helpers.SpawnProcess("dbus-send", []string{
 		"--session",
 		"--print-reply",
 		fmt.Sprintf("--dest=%s", playerService),
@@ -145,7 +146,7 @@ func GetMPRISProperties(playerService string) (string, error) {
 
 // GetMPRISMetadata retrieves metadata from a specific MPRIS player
 func GetMPRISMetadata(playerService string) (string, error) {
-	output, err := SpawnProcess("dbus-send", []string{
+	output, err := helpers.SpawnProcess("dbus-send", []string{
 		"--session",
 		"--print-reply",
 		fmt.Sprintf("--dest=%s", playerService),

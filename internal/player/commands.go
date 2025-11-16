@@ -1,7 +1,7 @@
 package player
 
 import (
-	"Quazaar/utils"
+	"Quazaar/pkg/helpers"
 	"fmt"
 	"log"
 )
@@ -45,7 +45,7 @@ func HandlePlayerCommand(cmdData map[string]interface{}) error {
 // Play starts media playback
 func Play() error {
 	log.Println("▶️  Play")
-	_, err := utils.SpawnProcess("playerctl", []string{"play"})
+	_, err := helpers.SpawnProcess("playerctl", []string{"play"})
 	if err != nil {
 		log.Printf("❌ Play failed: %v", err)
 		return err
@@ -57,7 +57,7 @@ func Play() error {
 // Pause pauses media playback
 func Pause() error {
 	log.Println("⏸️  Pause")
-	_, err := utils.SpawnProcess("playerctl", []string{"pause"})
+	_, err := helpers.SpawnProcess("playerctl", []string{"pause"})
 	if err != nil {
 		log.Printf("❌ Pause failed: %v", err)
 		return err
@@ -69,7 +69,7 @@ func Pause() error {
 // TogglePlayPause toggles between play and pause states
 func TogglePlayPause() error {
 	log.Println("🔄 Toggle Play/Pause")
-	_, err := utils.SpawnProcess("playerctl", []string{"play-pause"})
+	_, err := helpers.SpawnProcess("playerctl", []string{"play-pause"})
 	if err != nil {
 		log.Printf("❌ Toggle failed: %v", err)
 		return err
@@ -81,7 +81,7 @@ func TogglePlayPause() error {
 // Next skips to the next track
 func Next() error {
 	log.Println("⏭️  Next Track")
-	_, err := utils.SpawnProcess("playerctl", []string{"next"})
+	_, err := helpers.SpawnProcess("playerctl", []string{"next"})
 	if err != nil {
 		log.Printf("❌ Next track failed: %v", err)
 		return err
@@ -93,7 +93,7 @@ func Next() error {
 // Previous plays the previous track
 func Previous() error {
 	log.Println("⏮️  Previous Track")
-	_, err := utils.SpawnProcess("playerctl", []string{"previous"})
+	_, err := helpers.SpawnProcess("playerctl", []string{"previous"})
 	if err != nil {
 		log.Printf("❌ Previous track failed: %v", err)
 		return err
@@ -105,7 +105,7 @@ func Previous() error {
 // VolumeUp increases the volume
 func VolumeUp() error {
 	log.Println("🔊 Volume Up")
-	_, err := utils.SpawnProcess("playerctl", []string{"volume", "0.05+"})
+	_, err := helpers.SpawnProcess("playerctl", []string{"volume", "0.05+"})
 	if err != nil {
 		log.Printf("❌ Volume up failed: %v", err)
 		return err
@@ -117,7 +117,7 @@ func VolumeUp() error {
 // VolumeDown decreases the volume
 func VolumeDown() error {
 	log.Println("🔉 Volume Down")
-	_, err := utils.SpawnProcess("playerctl", []string{"volume", "0.05-"})
+	_, err := helpers.SpawnProcess("playerctl", []string{"volume", "0.05-"})
 	if err != nil {
 		log.Printf("❌ Volume down failed: %v", err)
 		return err
@@ -129,7 +129,7 @@ func VolumeDown() error {
 // Stop stops media playback
 func Stop() error {
 	log.Println("⛔ Stop")
-	_, err := utils.SpawnProcess("playerctl", []string{"stop"})
+	_, err := helpers.SpawnProcess("playerctl", []string{"stop"})
 	if err != nil {
 		log.Printf("❌ Stop failed: %v", err)
 		return err
@@ -141,7 +141,7 @@ func Stop() error {
 // Seek moves the playback position (in seconds)
 func Seek(seconds int64) error {
 	log.Printf("📍 Seek to %d seconds", seconds)
-	_, err := utils.SpawnProcess("playerctl", []string{"position", fmt.Sprintf("%d", seconds)})
+	_, err := helpers.SpawnProcess("playerctl", []string{"position", fmt.Sprintf("%d", seconds)})
 	if err != nil {
 		log.Printf("❌ Seek failed: %v", err)
 		return err
@@ -158,7 +158,7 @@ func SeekRelative(seconds int64) error {
 	}
 	seekStr := fmt.Sprintf("%s%d", sign, seconds)
 	log.Printf("📍 Seek relative: %s seconds", seekStr)
-	_, err := utils.SpawnProcess("playerctl", []string{"position", seekStr})
+	_, err := helpers.SpawnProcess("playerctl", []string{"position", seekStr})
 	if err != nil {
 		log.Printf("❌ Seek relative failed: %v", err)
 		return err

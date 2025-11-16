@@ -1,33 +1,11 @@
-// Copyright 2025 Quazaar
-//
-// Licensed under the MIT License. See LICENSE file for details.
-
-package utils
+package media
 
 import (
+	"Quazaar/pkg/helpers"
 	"encoding/json"
 	"fmt"
 	"strings"
 )
-
-// WindowsMediaInfo represents media information retrieved via Windows APIs
-type WindowsMediaInfo struct {
-	Title         string
-	Artist        string
-	Album         string
-	AlbumArt      string
-	Position      int64  // in milliseconds
-	Length        int64  // in milliseconds
-	Status        string // Playing, Paused, Stopped
-	Player        string
-	PlayerName    string
-	CanPlay       bool
-	CanPause      bool
-	CanGoPrevious bool
-	CanGoNext     bool
-	CanSeek       bool
-	Metadata      map[string]string
-}
 
 // GetPlayerInfoViaWindows retrieves media info using Windows APIs
 func GetPlayerInfoViaWindows() (WindowsMediaInfo, error) {
@@ -76,7 +54,7 @@ func GetPlayerInfoViaSMTC() (WindowsMediaInfo, error) {
 		}
 	`
 
-	output, err := SpawnProcess("powershell", []string{"-Command", psScript})
+	output, err := helpers.SpawnProcess("powershell", []string{"-Command", psScript})
 	if err != nil {
 		return info, err
 	}
@@ -174,7 +152,7 @@ func GetPlayerInfoViaPowerShell() (WindowsMediaInfo, error) {
 		}
 	`
 
-	output, err := SpawnProcess("powershell", []string{"-Command", psScript})
+	output, err := helpers.SpawnProcess("powershell", []string{"-Command", psScript})
 	if err != nil {
 		return info, err
 	}
@@ -204,7 +182,7 @@ func GetWindowsActivePlayers() ([]string, error) {
 		}
 	`
 
-	output, err := SpawnProcess("powershell", []string{"-Command", psScript})
+	output, err := helpers.SpawnProcess("powershell", []string{"-Command", psScript})
 	if err != nil {
 		return nil, err
 	}
@@ -287,7 +265,7 @@ func ControlWindowsMedia(command string) error {
 		return fmt.Errorf("unsupported command: %s", command)
 	}
 
-	_, err := SpawnProcess("powershell", []string{"-Command", psScript})
+	_, err := helpers.SpawnProcess("powershell", []string{"-Command", psScript})
 	return err
 }
 
@@ -332,7 +310,7 @@ func getWindowsMediaSessions() ([]string, error) {
 		}
 	`
 
-	output, err := SpawnProcess("powershell", []string{"-Command", psScript})
+	output, err := helpers.SpawnProcess("powershell", []string{"-Command", psScript})
 	if err != nil {
 		return nil, err
 	}
@@ -406,7 +384,7 @@ func GetWindowsMediaInfoByPlayer(playerName string) (WindowsMediaInfo, error) {
 		}
 	`, playerName, playerName, playerName, playerName, playerName, playerName)
 
-	output, err := SpawnProcess("powershell", []string{"-Command", psScript})
+	output, err := helpers.SpawnProcess("powershell", []string{"-Command", psScript})
 	if err != nil {
 		return info, err
 	}
