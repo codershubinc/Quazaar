@@ -47,6 +47,9 @@ func main() {
 	http.HandleFunc("/api/signup", auth.HandleSignup)
 	http.HandleFunc("/api/login", auth.HandleLogin)
 
+	// Serve static assets
+	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets/"))))
+
 	// Start media poller
 	go poller.Handle()
 
