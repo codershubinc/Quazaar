@@ -1,6 +1,7 @@
 package spotifyTokens
 
 import (
+	"Quazaar/pkg/helpers"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -10,8 +11,6 @@ import (
 	"os"
 	"strings"
 	"time"
-
-	"Quazaar/pkg/helpers"
 )
 
 // TokenExchangeResponse represents the response from Spotify's token endpoint
@@ -23,9 +22,17 @@ type TokenExchangeResponse struct {
 	Scope        string `json:"scope"`
 }
 
-// getting refresh token
+// ExchangeCodeForToken exchanges an authorization code for access and refresh tokens
+// This is used during the OAuth callback flow after user authorizes the application
+//
+// Parameters:
+//   - code: Authorization code received from Spotify OAuth callback
+//   - redirectURI: The redirect URI used during authorization (must match)
+//
+// Returns:
+//   - *TokenExchangeResponse: Contains access_token, refresh_token, and expiry info
+//   - error: If the exchange fails at any stage
 func ExchangeCodeForToken(code, redirectURI string) (*TokenExchangeResponse, error) {
-
 	data := url.Values{
 		"grant_type":   {"authorization_code"},
 		"code":         {code},
@@ -75,7 +82,17 @@ func ExchangeCodeForToken(code, redirectURI string) (*TokenExchangeResponse, err
 }
 
 // RefreshAccessToken refreshes an expired access token using the refresh token
-// Returns a new access token and updates the expiry time
+// Returns a new access token with updated expiry time
+//
+// Note: Spotify may or may not return a new refresh token. If not returned,
+// continue using the existing refresh token.
+//
+// Parameters:
+//   - refreshToken: The refresh token obtained during initial authorization
+//
+// Returns:
+//   - *TokenExchangeResponse: Contains new access_token and expiry info
+//   - error: If the refresh fails
 func RefreshAccessToken(refreshToken string) (*TokenExchangeResponse, error) {
 	data := url.Values{
 		"grant_type":    {"refresh_token"},
@@ -126,6 +143,14 @@ func RefreshAccessToken(refreshToken string) (*TokenExchangeResponse, error) {
 }
 
 // ValidateToken checks if a token is valid by making a test request to Spotify API
+// Uses the /v1/me endpoint which returns user profile if token is valid
+//
+// Parameters:
+//   - accessToken: The Spotify access token to validate
+//
+// Returns:
+//   - bool: true if token is valid, false otherwise
+//   - error: If the validation request itself fails (network error, etc.)
 func ValidateToken(accessToken string) (bool, error) {
 	req, err := http.NewRequest("GET", "https://api.spotify.com/v1/me", nil)
 	if err != nil {
@@ -151,6 +176,15 @@ func ValidateToken(accessToken string) (bool, error) {
 }
 
 // RevokeToken revokes a Spotify access or refresh token
+// Once revoked, the token can no longer be used for API requests
+//
+// Note: This endpoint may not be available in all Spotify regions
+//
+// Parameters:
+//   - token: The access or refresh token to revoke
+//
+// Returns:
+//   - error: If the revocation fails
 func RevokeToken(token string) error {
 	data := url.Values{
 		"token": {token},

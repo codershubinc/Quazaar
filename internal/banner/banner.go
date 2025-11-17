@@ -11,7 +11,7 @@ import (
 func Variant1() {
 	hostname, _ := os.Hostname()
 
-	fmt.Println("\n\n")
+	fmt.Print("\n\n")
 	fmt.Println("    ╔═══════════════════════════════════════════════════════════════════════════════════╗")
 	fmt.Println("    ║                                                                                   ║")
 	fmt.Println("    ║                                                                                   ║")
@@ -47,14 +47,14 @@ func Variant1() {
 	fmt.Println("    ║    Project: Quazaar                  Repository: https://github.com/codershubinc  ║")
 	fmt.Println("    ║                                                                                   ║")
 	fmt.Println("    ╚═══════════════════════════════════════════════════════════════════════════════════╝")
-	fmt.Println("\n")
+	fmt.Print("\n")
 }
 
 // Variant2 - Full width gradient with system stats
 func Variant2() {
 	hostname, _ := os.Hostname()
 
-	fmt.Println("\n\n")
+	fmt.Print("\n\n")
 	fmt.Println("  ╭─────────────────────────────────────────────────────────────────────────────────╮")
 	fmt.Println("  │                                                                                 │")
 	fmt.Println("  │                                                                                 │")
@@ -83,14 +83,14 @@ func Variant2() {
 	fmt.Println("  │  © 2025 Swapnil Ingle  •  MIT Licensed  •  Project: Quazaar                    │")
 	fmt.Println("  │                                                                                 │")
 	fmt.Println("  ╰─────────────────────────────────────────────────────────────────────────────────╯")
-	fmt.Println("\n")
+	fmt.Print("\n")
 }
 
 // Variant3 - Bold block letters with full info
 func Variant3() {
 	hostname, _ := os.Hostname()
 
-	fmt.Println("\n\n")
+	fmt.Print("\n\n")
 	fmt.Println("    ╔════════════════════════════════════════════════════════════════════════════╗")
 	fmt.Println("    ║                                                                            ║")
 	fmt.Println("    ║       ██████╗ ██╗   ██╗ █████╗ ███████╗ █████╗  █████╗ ██████╗            ║")
@@ -122,14 +122,14 @@ func Variant3() {
 	fmt.Println("    ║  © 2025 Swapnil Ingle • MIT Licensed • Project: Quazaar                   ║")
 	fmt.Println("    ║                                                                            ║")
 	fmt.Println("    ╚════════════════════════════════════════════════════════════════════════════╝")
-	fmt.Println("\n")
+	fmt.Print("\n")
 }
 
 // Variant4 - Compact modern with details
 func Variant4() {
 	hostname, _ := os.Hostname()
 
-	fmt.Println("\n\n")
+	fmt.Print("\n\n")
 	fmt.Println("         ┌───────────────────────────────────────────────────────────────────┐")
 	fmt.Println("         │                                                                   │")
 	fmt.Println("         │      ██████╗ ██╗   ██╗ █████╗ ███████╗ █████╗  █████╗ ██████╗    │")
@@ -169,14 +169,14 @@ func Variant4() {
 	fmt.Println("         │  Project: Quazaar • github.com/codershubinc                      │")
 	fmt.Println("         │                                                                   │")
 	fmt.Println("         └───────────────────────────────────────────────────────────────────┘")
-	fmt.Println("\n")
+	fmt.Print("\n")
 }
 
 // Variant5 - Double border with ASCII art
 func Variant5() {
 	hostname, _ := os.Hostname()
 
-	fmt.Println("\n\n")
+	fmt.Print("\n\n")
 	fmt.Println("  ╔══════════════════════════════════════════════════════════════════════════════╗")
 	fmt.Println("  ║  ╔════════════════════════════════════════════════════════════════════════╗  ║")
 	fmt.Println("  ║  ║                                                                        ║  ║")
@@ -210,14 +210,14 @@ func Variant5() {
 	fmt.Println("  ║  ║                                                                        ║  ║")
 	fmt.Println("  ║  ╚════════════════════════════════════════════════════════════════════════╝  ║")
 	fmt.Println("  ╚══════════════════════════════════════════════════════════════════════════════╝")
-	fmt.Println("\n")
+	fmt.Print("\n")
 }
 
 // Variant6 - Minimal elegant with dividers
 func Variant6() {
 	hostname, _ := os.Hostname()
 
-	fmt.Println("\n\n")
+	fmt.Print("\n\n")
 	fmt.Println("    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	fmt.Println()
 	fmt.Println("                             ⚡ Q U A Z A A R ⚡")
@@ -250,14 +250,14 @@ func Variant6() {
 	fmt.Println("      Project: Quazaar • github.com/codershubinc")
 	fmt.Println()
 	fmt.Println("    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-	fmt.Println("\n")
+	fmt.Print("\n")
 }
 
 // Variant7 - Retro ASCII art style
 func Variant7() {
 	hostname, _ := os.Hostname()
 
-	fmt.Println("\n\n")
+	fmt.Print("\n\n")
 	fmt.Println("    ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓")
 	fmt.Println("    ┃                                                                         ┃")
 	fmt.Println("    ┃    ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄     ┃")
@@ -291,7 +291,7 @@ func Variant7() {
 	fmt.Println("    ┃    Project: Quazaar • github.com/codershubinc                           ┃")
 	fmt.Println("    ┃                                                                         ┃")
 	fmt.Println("    ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛")
-	fmt.Println("\n")
+	fmt.Print("\n")
 }
 
 // Show displays the default banner (Variant1)
