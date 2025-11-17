@@ -19,7 +19,7 @@ func Init() {
 	SpotifyAPIBaseURL = os.Getenv("SPOTIFY_API_BASE_URL")
 
 	fmt.Println("Checking for spotify tokens .../.../.../...")
-	tk, err := spotifyTokens.GetSpotifyRefreshToken()
+	_, err := spotifyTokens.GetSpotifyRefreshToken()
 	if err != nil {
 		fmt.Println("❌ Spotify tokens not found. Please authenticate with Spotify.")
 		fmt.Println("Refresh token not found in DB redirecting to auth spotify ../.../../..")
@@ -27,12 +27,26 @@ func Init() {
 			helpers.WARNING,
 			"Spotify refresh token not found in DB, redirecting to auth spotify",
 		)
-	} else {
-		fmt.Println("✅ Spotify tokens found.")
+	}
+	fmt.Println("✅ Spotify tokens found.")
+	helpers.LogMessage(
+		helpers.INFO,
+		"Spotify refresh token found in DB",
+	)
+	helpers.LogMessage(
+		helpers.INFO,
+		"Spotify :: Generating access token from refresh token",
+	)
+	_, err = spotifyTokens.GetSpotifyAccessToken()
+	if err != nil {
 		helpers.LogMessage(
-			helpers.INFO,
-			"Spotify refresh token found in DB: %s",
-			tk,
+			helpers.ERROR,
+			"Spotify :: Failed to generate access token from refresh token: %s",
+			err.Error(),
 		)
 	}
+	helpers.LogMessage(
+		helpers.INFO,
+		"Spotify :: Access token generated successfully",
+	)
 }

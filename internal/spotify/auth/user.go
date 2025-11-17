@@ -63,14 +63,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, authURL, http.StatusTemporaryRedirect)
 }
 
-// storeRefreshToken stores the refresh token in the database
-func storeRefreshToken(refreshToken string, expiresIn int) error {
-	if err := spotifyTokens.SetSpotifyRefreshToken(refreshToken, expiresIn); err != nil {
-		return fmt.Errorf("failed to store refresh token: %w", err)
-	}
-	return nil
-}
-
 func Callback(w http.ResponseWriter, r *http.Request) {
 	code := r.URL.Query().Get("code")
 	state := r.URL.Query().Get("state")
@@ -96,9 +88,9 @@ func Callback(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Store the refresh token
-	if err := storeRefreshToken(tokenResponse.RefreshToken, tokenResponse.ExpiresIn); err != nil {
+	if err := spotifyTokens.SetSpotifyRefreshToken(tokenResponse.RefreshToken, 0); err != nil {
 		helpers.LogMessage(helpers.ERROR, "Failed to store refresh token: %v", err)
-		http.Error(w, "Failed to store token", http.StatusInternalServerError)
+		http.Error(w, "Failed to store refresh token", http.StatusInternalServerError)
 		return
 	}
 
