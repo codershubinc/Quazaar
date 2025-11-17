@@ -31,3 +31,20 @@ type TokenResponse struct {
 	LastUsed  *time.Time `json:"last_used"`
 	Active    bool       `json:"active"`
 }
+
+// RefreshTokenRequest is the payload for token refresh
+type RefreshTokenRequest struct {
+	Token string `json:"token"`
+}
+
+// ChangePasswordRequest is the payload for password change
+type ChangePasswordRequest struct {
+	Token       string `json:"token"`
+	OldPassword string `json:"old_password"`
+	NewPassword string `json:"new_password"`
+}
+
+// LogoutRequest is the payload for user logout
+type LogoutRequest struct {
+	Token string `json:"token"`
+}
