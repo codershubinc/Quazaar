@@ -1,14 +1,11 @@
-// Copyright 2025 Swapnil Ingle
-//
-// Licensed under the MIT License. See LICENSE file for details.
-
 package main
 
 import (
+	"Quazaar/internal/api"
 	"Quazaar/internal/auth"
+	"Quazaar/internal/banner"
 	"Quazaar/internal/db"
 	"Quazaar/internal/poller"
-	"Quazaar/internal/websocket"
 	"fmt"
 	"log"
 	"net/http"
@@ -23,7 +20,9 @@ func main() {
 		log.Println("⚠️  .env file not found, using system environment variables")
 	}
 
-	fmt.Println("🚀 Hello Quazaar Server ...")
+	// Display startup banner
+	// Options: banner.Variant1(), banner.Variant2(), banner.Variant3(), banner.Variant4()
+	banner.Show() // Uses Variant1 by default
 
 	// Initialize database
 	if err := db.Init(); err != nil {
@@ -41,14 +40,9 @@ func main() {
 	} else {
 		log.Println("✅ User found. Proceeding to start the server.")
 	}
-	// Setup HTTP routes
-	http.HandleFunc("/", serveHome)
-	http.HandleFunc("/ws", websocket.Handle)
-	http.HandleFunc("/api/signup", auth.HandleSignup)
-	http.HandleFunc("/api/login", auth.HandleLogin)
 
-	// Serve static assets
-	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets/"))))
+	// Setup all API routes
+	api.SetupRoutes()
 
 	// Start media poller
 	go poller.Handle()
@@ -65,16 +59,4 @@ func main() {
 	if err := http.ListenAndServe(localAddr, nil); err != nil {
 		log.Fatal("❌ Server error:", err)
 	}
-}
-
-func serveHome(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
-		http.Error(w, "Not found", http.StatusNotFound)
-		return
-	}
-	if r.Method != http.MethodGet {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-	http.ServeFile(w, r, "temp/web/index.html")
 }
