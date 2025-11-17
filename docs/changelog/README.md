@@ -19,6 +19,7 @@ Complete version history and release notes for all Quazaar releases.
 **Status:** 🟡 Beta - Major Restructure
 
 ### Highlights
+
 - Complete project restructure to Go standard layout
 - SQLite database integration
 - Authentication system foundation
@@ -28,6 +29,7 @@ Complete version history and release notes for all Quazaar releases.
 - Cross-platform support improvements
 
 ### Major Changes
+
 - Restructured to `cmd/`, `internal/`, `pkg/` architecture
 - All files renamed to snake_case
 - New database at `~/.quazaar/quazaar.db`
@@ -37,6 +39,7 @@ Complete version history and release notes for all Quazaar releases.
 - Static asset serving
 
 ### New Endpoints
+
 ```
 POST /api/signup
 POST /api/login
@@ -59,12 +62,14 @@ GET /assets/*
 **Status:** 🟡 Beta - Feature Enhancement
 
 ### Highlights
+
 - Player control commands
 - System information APIs
 - Enhanced media handling
 - Utils directory organization
 
 ### New Features
+
 - Player controls (play/pause/next/previous)
 - WiFi information endpoint
 - Bluetooth devices endpoint
@@ -72,6 +77,7 @@ GET /assets/*
 - Better code organization with utils/
 
 ### New Endpoints
+
 ```
 POST /player/play-pause
 POST /player/play
@@ -94,12 +100,14 @@ GET /system/bluetooth
 **Status:** 🟡 Beta - Stability Update
 
 ### Highlights
+
 - Improved media detection
 - Enhanced WebSocket stability
 - Better error handling
 - Code cleanup and refactoring
 
 ### Improvements
+
 - Better playerctl integration
 - More reliable WebSocket updates
 - Enhanced metadata parsing
@@ -107,6 +115,7 @@ GET /system/bluetooth
 - Better handling of edge cases
 
 ### Bug Fixes
+
 - WebSocket disconnection issues
 - Player detection edge cases
 - Missing metadata handling
@@ -122,12 +131,14 @@ GET /system/bluetooth
 **Status:** 🟢 Beta - Initial Release
 
 ### Highlights
+
 - First beta release
 - WebSocket server implementation
 - Basic media player integration
 - System information retrieval
 
 ### Core Features
+
 - Real-time WebSocket communication
 - Media player integration via playerctl
 - WiFi information
@@ -135,6 +146,7 @@ GET /system/bluetooth
 - Basic HTTP server
 
 ### Endpoints
+
 ```
 GET /ws
 GET /
@@ -152,20 +164,20 @@ v0.0.1.0 (Initial)
     ├─ Basic WebSocket
     ├─ Playerctl integration
     └─ Simple architecture
-    
+
 v0.0.1.1 (Stability)
     │
     ├─ Better media detection
     ├─ WebSocket improvements
     └─ Bug fixes
-    
+
 v0.0.1.2 (Features)
     │
     ├─ Player controls
     ├─ System APIs
     ├─ Utils organization
     └─ More endpoints
-    
+
 v0.0.1.3 (Architecture) ← Current
     │
     ├─ Project renamed (Blitz → Quazaar)
@@ -183,28 +195,28 @@ v0.0.1.3 (Architecture) ← Current
 
 ### Release Progression
 
-| Version   | Binary Size | Memory  | Endpoints | Packages | LOC    |
-|-----------|-------------|---------|-----------|----------|--------|
-| v0.0.1.0  | ~8 MB       | ~40 MB  | 2         | 1        | ~1200  |
-| v0.0.1.1  | ~8.5 MB     | ~45 MB  | 2         | 1        | ~1400  |
-| v0.0.1.2  | ~10 MB      | ~50 MB  | 8         | 1+utils  | ~1800  |
-| v0.0.1.3  | ~13 MB      | ~70 MB  | 18+       | 10       | ~2500  |
+| Version  | Binary Size | Memory | Endpoints | Packages | LOC   |
+| -------- | ----------- | ------ | --------- | -------- | ----- |
+| v0.0.1.0 | ~8 MB       | ~40 MB | 2         | 1        | ~1200 |
+| v0.0.1.1 | ~8.5 MB     | ~45 MB | 2         | 1        | ~1400 |
+| v0.0.1.2 | ~10 MB      | ~50 MB | 8         | 1+utils  | ~1800 |
+| v0.0.1.3 | ~13 MB      | ~70 MB | 18+       | 10       | ~2500 |
 
 ### Feature Growth
 
-| Feature              | v0.0.1.0 | v0.0.1.1 | v0.0.1.2 | v0.0.1.3 |
-|---------------------|----------|----------|----------|----------|
-| WebSocket           | ✅       | ✅       | ✅       | ✅       |
-| Media Info          | ✅       | ✅       | ✅       | ✅       |
-| Player Controls     | ❌       | ❌       | ✅       | ✅       |
-| System Info         | ⚠️       | ⚠️       | ✅       | ✅       |
-| Authentication      | ❌       | ❌       | ❌       | ✅       |
-| Database            | ❌       | ❌       | ❌       | ✅       |
-| API Versioning      | ❌       | ❌       | ❌       | ✅       |
-| Startup Banners     | ❌       | ❌       | ❌       | ✅       |
-| Static Assets       | ❌       | ❌       | ❌       | ✅       |
-| D-Bus Integration   | ⚠️       | ⚠️       | ⚠️       | ✅       |
-| Cross-Platform      | ❌       | ❌       | ❌       | ⚠️       |
+| Feature           | v0.0.1.0 | v0.0.1.1 | v0.0.1.2 | v0.0.1.3 |
+| ----------------- | -------- | -------- | -------- | -------- |
+| WebSocket         | ✅       | ✅       | ✅       | ✅       |
+| Media Info        | ✅       | ✅       | ✅       | ✅       |
+| Player Controls   | ❌       | ❌       | ✅       | ✅       |
+| System Info       | ⚠️       | ⚠️       | ✅       | ✅       |
+| Authentication    | ❌       | ❌       | ❌       | ✅       |
+| Database          | ❌       | ❌       | ❌       | ✅       |
+| API Versioning    | ❌       | ❌       | ❌       | ✅       |
+| Startup Banners   | ❌       | ❌       | ❌       | ✅       |
+| Static Assets     | ❌       | ❌       | ❌       | ✅       |
+| D-Bus Integration | ⚠️       | ⚠️       | ⚠️       | ✅       |
+| Cross-Platform    | ❌       | ❌       | ❌       | ⚠️       |
 
 ✅ Fully Implemented | ⚠️ Partial | ❌ Not Available
 
@@ -213,6 +225,7 @@ v0.0.1.3 (Architecture) ← Current
 ## Breaking Changes
 
 ### v0.0.1.3
+
 - Project renamed: `blitz` → `quazaar`
 - Binary renamed: `blitz_v0.0.1.2` → `quazaar_v0.0.1.3_linux_x64`
 - API endpoints versioned: `/player/*` → `/api/v0.1/player/*`
@@ -220,9 +233,11 @@ v0.0.1.3 (Architecture) ← Current
 - Import paths restructured
 
 ### v0.0.1.2
+
 - No breaking changes (backward compatible)
 
 ### v0.0.1.1
+
 - No breaking changes (backward compatible)
 
 ---
@@ -232,6 +247,7 @@ v0.0.1.3 (Architecture) ← Current
 ### From v0.0.1.2 to v0.0.1.3
 
 **API Changes:**
+
 ```bash
 # Old                           # New
 POST /player/play       →       POST /api/v0.1/player/play
@@ -240,6 +256,7 @@ GET /system/wifi        →       GET /api/v0.1/system/wifi
 ```
 
 **Binary Changes:**
+
 ```bash
 # Old
 ./blitz_v0.0.1.2
@@ -249,6 +266,7 @@ GET /system/wifi        →       GET /api/v0.1/system/wifi
 ```
 
 **New Features to Consider:**
+
 - User authentication (signup/login)
 - Database storage
 - Startup banners
@@ -257,12 +275,14 @@ GET /system/wifi        →       GET /api/v0.1/system/wifi
 ### From v0.0.1.1 to v0.0.1.2
 
 **No breaking changes** - Backward compatible
+
 - New endpoints added
 - Enhanced functionality
 
 ### From v0.0.1.0 to v0.0.1.1
 
 **No breaking changes** - Backward compatible
+
 - Stability improvements
 - Bug fixes
 
@@ -271,10 +291,12 @@ GET /system/wifi        →       GET /api/v0.1/system/wifi
 ## Deprecation Notices
 
 ### v0.0.1.3
+
 - Old endpoint paths without `/api/v0.1/` prefix are **deprecated**
 - Will be removed in v0.1.0
 
 ### v0.0.1.2
+
 - `utils/` directory structure deprecated
 - Replaced with proper Go packages in v0.0.1.3
 
@@ -283,6 +305,7 @@ GET /system/wifi        →       GET /api/v0.1/system/wifi
 ## Known Issues by Version
 
 ### v0.0.1.3
+
 - Authentication endpoints not yet protected
 - Token expiry not enforced
 - Windows support experimental
@@ -290,17 +313,20 @@ GET /system/wifi        →       GET /api/v0.1/system/wifi
 - No TLS support
 
 ### v0.0.1.2
+
 - No authentication
 - No database
 - File naming not following Go conventions
 - No API versioning
 
 ### v0.0.1.1
+
 - Limited API endpoints
 - Single file architecture
 - No authentication
 
 ### v0.0.1.0
+
 - Basic functionality only
 - Limited error handling
 - No API versioning
@@ -311,6 +337,7 @@ GET /system/wifi        →       GET /api/v0.1/system/wifi
 ## Roadmap
 
 ### v0.0.1.4 (Planned)
+
 - Complete authentication middleware
 - Protected endpoints
 - Token validation
@@ -318,6 +345,7 @@ GET /system/wifi        →       GET /api/v0.1/system/wifi
 - Token refresh mechanism
 
 ### v0.1.0 (Future)
+
 - Stable API v1
 - Full authentication system
 - Rate limiting
@@ -325,12 +353,14 @@ GET /system/wifi        →       GET /api/v0.1/system/wifi
 - Comprehensive testing
 
 ### v0.2.0 (Future)
+
 - Windows native support
 - macOS support
 - Mobile app integration
 - TLS/SSL support
 
 ### v1.0.0 (Future)
+
 - Production ready
 - Stable API
 - Full documentation
