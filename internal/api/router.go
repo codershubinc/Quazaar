@@ -2,7 +2,10 @@ package api
 
 import (
 	"Quazaar/internal/auth"
+	"Quazaar/internal/middleware"
 	"Quazaar/internal/player"
+	spotifyAuth "Quazaar/internal/spotify/auth"
+	spotifyDevices "Quazaar/internal/spotify/devices"
 	"Quazaar/internal/system"
 	"Quazaar/internal/websocket"
 	"net/http"
@@ -14,7 +17,7 @@ func SetupRoutes() {
 	http.HandleFunc("/", serveHome)
 
 	// WebSocket
-	http.HandleFunc("/ws", websocket.Handle)
+	http.HandleFunc("/ws", middleware.AuthenticationMiddleware(websocket.Handle))
 
 	// Static assets
 	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets/"))))
@@ -22,27 +25,37 @@ func SetupRoutes() {
 	// API v0.1 - Authentication
 	http.HandleFunc("/api/v0.1/signup", auth.HandleSignup)
 	http.HandleFunc("/api/v0.1/login", auth.HandleLogin)
+	http.HandleFunc("/api/v0.1/auth/refresh", auth.HandleRefreshToken)
+	http.HandleFunc("/api/v0.1/auth/change-password", auth.HandleChangePassword)
+	http.HandleFunc("/api/v0.1/auth/user", auth.HandleGetUserInfo)
+	http.HandleFunc("/api/v0.1/auth/logout", auth.HandleLogout)
+	http.HandleFunc("/api/v0.1/auth/tokens", auth.HandleGetTokens)
 
 	// API v0.1 - Player Info
-	http.HandleFunc("/api/v0.1/player/info", player.HandleGetPlayerInfo)
-	http.HandleFunc("/api/v0.1/player/info/dbus", player.HandleGetPlayerInfoDBus)
-	http.HandleFunc("/api/v0.1/player/info/windows", player.HandleGetPlayerInfoWindows)
+	http.HandleFunc("/api/v0.1/player/info", middleware.AuthenticationMiddleware(player.HandleGetPlayerInfo))
+	http.HandleFunc("/api/v0.1/player/info/dbus", middleware.AuthenticationMiddleware(player.HandleGetPlayerInfoDBus))
+	http.HandleFunc("/api/v0.1/player/info/windows", middleware.AuthenticationMiddleware(player.HandleGetPlayerInfoWindows))
 
 	// API v0.1 - Player Lists
-	http.HandleFunc("/api/v0.1/player/list", player.HandleGetActivePlayers)
-	http.HandleFunc("/api/v0.1/player/mpris/list", player.HandleGetMPRISPlayers)
-	http.HandleFunc("/api/v0.1/player/windows/list", player.HandleGetWindowsActivePlayers)
+	http.HandleFunc("/api/v0.1/player/list", middleware.AuthenticationMiddleware(player.HandleGetActivePlayers))
+	http.HandleFunc("/api/v0.1/player/mpris/list", middleware.AuthenticationMiddleware(player.HandleGetMPRISPlayers))
+	http.HandleFunc("/api/v0.1/player/windows/list", middleware.AuthenticationMiddleware(player.HandleGetWindowsActivePlayers))
 
 	// API v0.1 - Player Controls
-	http.HandleFunc("/api/v0.1/player/play-pause", player.HandlePlayPause)
-	http.HandleFunc("/api/v0.1/player/play", player.HandlePlay)
-	http.HandleFunc("/api/v0.1/player/pause", player.HandlePause)
-	http.HandleFunc("/api/v0.1/player/next", player.HandleNext)
-	http.HandleFunc("/api/v0.1/player/previous", player.HandlePrevious)
-
+	http.HandleFunc("/api/v0.1/player/play-pause", middleware.AuthenticationMiddleware(player.HandlePlayPause))
+	http.HandleFunc("/api/v0.1/player/play", middleware.AuthenticationMiddleware(player.HandlePlay))
+	http.HandleFunc("/api/v0.1/player/pause", middleware.AuthenticationMiddleware(player.HandlePause))
+	http.HandleFunc("/api/v0.1/player/next", middleware.AuthenticationMiddleware(player.HandleNext))
+	http.HandleFunc("/api/v0.1/player/previous", middleware.AuthenticationMiddleware(player.HandlePrevious))
 	// API v0.1 - System Info
-	http.HandleFunc("/api/v0.1/system/wifi", system.HandleGetWiFiInfo)
-	http.HandleFunc("/api/v0.1/system/bluetooth", system.HandleGetBluetoothDevices)
+	http.HandleFunc("/api/v0.1/system/wifi", middleware.AuthenticationMiddleware(system.HandleGetWiFiInfo))
+	http.HandleFunc("/api/v0.1/system/bluetooth", middleware.AuthenticationMiddleware(system.HandleGetBluetoothDevices))
+
+	// API v0.1 -  Spotify Integration
+	http.HandleFunc("/api/v0.1/spotify/login", middleware.AuthenticationMiddleware(spotifyAuth.Login))
+	http.HandleFunc("/api/v0.1/spotify/callback", spotifyAuth.Callback)
+	http.HandleFunc("/api/v0.1/spotify/user", middleware.AuthenticationMiddleware(spotifyAuth.GetUser))
+	http.HandleFunc("/api/v0.1/spotify/devices", middleware.AuthenticationMiddleware(spotifyDevices.GetUserDevices))
 }
 
 func serveHome(w http.ResponseWriter, r *http.Request) {

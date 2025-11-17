@@ -69,7 +69,7 @@ func generateAuthToken(username string) (string, error) {
 
 	// Schema: tokenOf, tokenType, token, expiry
 	_, err = DB.Exec(`INSERT INTO tokens (tokenOf, tokenType, token, expiry) VALUES (?, ?, ?, ?)`,
-		username, "auth", hashedToken, 0)
+		username, "deviceId", hashedToken, 0)
 	if err != nil {
 		log.Printf("❌ Error creating token: %v", err)
 		return "", fmt.Errorf("failed to create token: %v", err)
@@ -88,4 +88,107 @@ func hashPassword(password string) (string, error) {
 func checkPasswordHash(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
+}
+
+// validateToken checks if token exists and returns the username
+func validateToken(token string) (string, error) {
+	if DB == nil {
+		return "", fmt.Errorf("database not initialized")
+	}
+
+	var username string
+	err := DB.QueryRow(`SELECT tokenOf FROM tokens WHERE token = ?`, token).Scan(&username)
+	if err != nil {
+		return "", fmt.Errorf("invalid token")
+	}
+
+	return username, nil
+}
+
+// invalidateToken removes a token from the database
+func invalidateToken(token string) error {
+	if DB == nil {
+		return fmt.Errorf("database not initialized")
+	}
+
+	result, err := DB.Exec(`DELETE FROM tokens WHERE token = ?`, token)
+	if err != nil {
+		return fmt.Errorf("failed to invalidate token: %v", err)
+	}
+
+	rowsAffected, _ := result.RowsAffected()
+	if rowsAffected == 0 {
+		return fmt.Errorf("token not found")
+	}
+
+	return nil
+}
+
+// updatePassword updates user's password
+func updatePassword(username, newPassword string) error {
+	if DB == nil {
+		return fmt.Errorf("database not initialized")
+	}
+
+	hashedPassword, err := hashPassword(newPassword)
+	if err != nil {
+		return err
+	}
+
+	_, err = DB.Exec(`UPDATE users SET pass = ? WHERE name = ?`, hashedPassword, username)
+	if err != nil {
+		return fmt.Errorf("failed to update password: %v", err)
+	}
+
+	return nil
+}
+
+// getUserInfo retrieves user information (excluding password)
+func getUserInfo(username string) (map[string]interface{}, error) {
+	if DB == nil {
+		return nil, fmt.Errorf("database not initialized")
+	}
+
+	var id int
+	var name string
+	err := DB.QueryRow(`SELECT id, name FROM users WHERE name = ?`, username).Scan(&id, &name)
+	if err != nil {
+		return nil, fmt.Errorf("user not found")
+	}
+
+	return map[string]interface{}{
+		"id":       id,
+		"username": name,
+	}, nil
+}
+
+// getUserTokens retrieves all active tokens for a user
+func getUserTokens(username string) ([]map[string]interface{}, error) {
+	if DB == nil {
+		return nil, fmt.Errorf("database not initialized")
+	}
+
+	rows, err := DB.Query(`SELECT id, tokenType, expiry FROM tokens WHERE tokenOf = ?`, username)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get tokens: %v", err)
+	}
+	defer rows.Close()
+
+	var tokens []map[string]interface{}
+	for rows.Next() {
+		var id int
+		var tokenType string
+		var expiry int
+		if err := rows.Scan(&id, &tokenType, &expiry); err != nil {
+			continue
+		}
+
+		tokens = append(tokens, map[string]interface{}{
+			"id":        id,
+			"tokenType": tokenType,
+			"expiry":    expiry,
+		})
+	}
+
+	return tokens, nil
 }

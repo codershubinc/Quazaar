@@ -78,6 +78,7 @@ func createTables() error {
 		tokenOf TEXT NOT NULL,
 		tokenType TEXT NOT NULL,
 		token TEXT NOT NULL UNIQUE,
+		deviceId TEXT,
 		expiry NUMERIC
 	);`
 
@@ -116,4 +117,8 @@ func CloseDB() error {
 		return DB.Close()
 	}
 	return nil
+}
+
+func GetDB() *sql.DB {
+	return DB
 }

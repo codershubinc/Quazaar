@@ -6,6 +6,7 @@ import (
 	"Quazaar/internal/banner"
 	"Quazaar/internal/db"
 	"Quazaar/internal/poller"
+	"Quazaar/internal/spotify"
 	"fmt"
 	"log"
 	"net/http"
@@ -46,6 +47,9 @@ func main() {
 
 	// Start media poller
 	go poller.Handle()
+
+	// Initialize Spotify integration
+	spotify.Init()
 
 	// Start the server
 	fmt.Println("")
