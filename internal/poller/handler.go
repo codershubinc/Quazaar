@@ -1,6 +1,3 @@
-// Copyright 2025 Swapnil Ingle
-//
-// Licensed under the MIT License. See LICENSE file for details.
 
 package poller
 
