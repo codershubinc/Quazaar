@@ -17,6 +17,7 @@ Third beta release with enhanced features and expanded API endpoints. Major impr
 ### New Features
 
 #### Player Controls
+
 - **Play/Pause Toggle** - `POST /player/play-pause`
 - **Explicit Play** - `POST /player/play`
 - **Explicit Pause** - `POST /player/pause`
@@ -24,17 +25,20 @@ Third beta release with enhanced features and expanded API endpoints. Major impr
 - **Previous Track** - `POST /player/previous`
 
 #### Media Information
+
 - **Player Info** - `GET /player/info`
 - **Active Players List** - `GET /player/list`
 - Enhanced metadata retrieval
 - Better artwork handling
 
 #### System Information
+
 - **WiFi Information** - `GET /system/wifi`
 - **Bluetooth Devices** - `GET /system/bluetooth`
 - Improved system stats
 
 ### Code Organization
+
 - Split utilities into separate files
 - Created `utils/` directory
 - Better code separation
@@ -45,6 +49,7 @@ Third beta release with enhanced features and expanded API endpoints. Major impr
 ## 🔄 Changes from v0.0.1.1
 
 ### New API Endpoints
+
 ```bash
 # Player Controls
 POST /player/play-pause
@@ -63,6 +68,7 @@ GET /system/bluetooth
 ```
 
 ### Code Structure
+
 ```
 blitz/
 ├── main.go
@@ -77,6 +83,7 @@ blitz/
 ```
 
 ### Improvements
+
 - Added player control commands
 - Enhanced error handling
 - Better logging
@@ -90,26 +97,31 @@ blitz/
 ### Player Controls
 
 **Play/Pause Toggle**
+
 ```bash
 curl -X POST http://localhost:8765/player/play-pause
 ```
 
 **Play**
+
 ```bash
 curl -X POST http://localhost:8765/player/play
 ```
 
 **Pause**
+
 ```bash
 curl -X POST http://localhost:8765/player/pause
 ```
 
 **Next Track**
+
 ```bash
 curl -X POST http://localhost:8765/player/next
 ```
 
 **Previous Track**
+
 ```bash
 curl -X POST http://localhost:8765/player/previous
 ```
@@ -117,21 +129,25 @@ curl -X POST http://localhost:8765/player/previous
 ### Information Endpoints
 
 **Player Info**
+
 ```bash
 curl http://localhost:8765/player/info
 ```
 
 **Active Players**
+
 ```bash
 curl http://localhost:8765/player/list
 ```
 
 **WiFi Information**
+
 ```bash
 curl http://localhost:8765/system/wifi
 ```
 
 **Bluetooth Devices**
+
 ```bash
 curl http://localhost:8765/system/bluetooth
 ```

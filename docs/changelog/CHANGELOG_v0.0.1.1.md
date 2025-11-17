@@ -15,18 +15,21 @@ Second beta release with improvements to media handling and code organization. F
 ## ✨ What's New
 
 ### Improvements
+
 - **Enhanced Media Detection** - Better playerctl integration and fallbacks
 - **Improved WebSocket Stability** - More reliable real-time updates
 - **Better Error Handling** - Improved error messages and logging
 - **Code Cleanup** - Refactored media information retrieval
 
 ### Media Features
+
 - Support for multiple media players
 - Better Spotify integration
 - Improved artwork retrieval
 - Enhanced metadata parsing
 
 ### Bug Fixes
+
 - Fixed WebSocket disconnection issues
 - Improved player detection logic
 - Better handling of missing players
@@ -37,12 +40,14 @@ Second beta release with improvements to media handling and code organization. F
 ## 🔄 Changes from v0.0.1.0
 
 ### Modified
+
 - Refactored `mediaInfo.go` for better code organization
 - Improved WebSocket message handling
 - Enhanced logging throughout application
 - Better error responses
 
 ### Fixed
+
 - WebSocket stability issues
 - Player detection edge cases
 - Missing metadata handling

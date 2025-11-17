@@ -15,17 +15,20 @@ First beta release of Blitz - a media control and system manager for Linux. Init
 ## ✨ New Features
 
 ### Core Features
+
 - **WebSocket Server** - Real-time communication for media updates
 - **Media Player Integration** - Basic playerctl integration for Linux media control
 - **System Information** - WiFi and Bluetooth information retrieval
 - **HTTP Server** - Basic HTTP endpoint serving
 
 ### Media Control
+
 - Get current player information
 - Track metadata retrieval
 - Basic playback information
 
 ### System Features
+
 - WiFi information (SSID, signal strength, etc.)
 - Bluetooth device enumeration
 - System information APIs
@@ -35,6 +38,7 @@ First beta release of Blitz - a media control and system manager for Linux. Init
 ## 🏗️ Architecture
 
 ### Project Structure
+
 ```
 blitz/
 ├── main.go                 # Application entry point
@@ -46,6 +50,7 @@ blitz/
 ```
 
 ### Technology Stack
+
 - **Language:** Go 1.21+
 - **Dependencies:**
   - `gorilla/websocket` - WebSocket support
@@ -58,12 +63,14 @@ blitz/
 ## 📋 API Endpoints
 
 ### WebSocket
+
 ```bash
 GET /ws
 # Real-time media information updates
 ```
 
 ### Home
+
 ```bash
 GET /
 # Basic home page
@@ -74,6 +81,7 @@ GET /
 ## 🔧 Configuration
 
 ### Default Settings
+
 - **Host:** 127.0.0.1
 - **Port:** 8765
 - **Polling Interval:** 1 second

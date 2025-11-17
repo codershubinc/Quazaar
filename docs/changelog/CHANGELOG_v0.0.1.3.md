@@ -15,17 +15,20 @@ Fourth beta release with complete project restructure following Go standard layo
 ## 🎉 Major Changes
 
 ### Project Renamed
+
 - **Old Name:** Blitz
 - **New Name:** Quazaar
 - **Binary:** `blitz_v0.0.1.2` → `quazaar_v0.0.1.3_linux_x64`
 
 ### Architecture Overhaul
+
 - **Go Standard Layout** - Restructured to `cmd/`, `internal/`, `pkg/`
 - **Package Organization** - 10 well-organized packages
 - **File Naming** - All files renamed to `snake_case.go`
 - **Import Paths** - Clean, organized imports
 
 ### New Features
+
 - ✅ **SQLite Database** - Persistent storage at `~/.quazaar/quazaar.db`
 - ✅ **User Authentication** - Signup/Login with bcrypt hashing
 - ✅ **Token System** - Foundation for API authentication
@@ -39,6 +42,7 @@ Fourth beta release with complete project restructure following Go standard layo
 ## 📦 Project Structure
 
 ### New Architecture
+
 ```
 Quazaar/
 ├── cmd/
@@ -106,6 +110,7 @@ Quazaar/
 **Location:** `~/.quazaar/quazaar.db`
 
 **Schema:**
+
 ```sql
 -- Users table (single user system)
 CREATE TABLE users (
@@ -127,6 +132,7 @@ CREATE TABLE tokens (
 ### Authentication System
 
 **Endpoints:**
+
 ```bash
 # Register user (only 1 allowed)
 POST /api/signup
@@ -144,6 +150,7 @@ POST /api/login
 ```
 
 **Features:**
+
 - Bcrypt password hashing (cost: 10)
 - Token generation
 - Single-user enforcement
@@ -152,6 +159,7 @@ POST /api/login
 ### Enhanced Media API (v0.1)
 
 **New Endpoints:**
+
 ```bash
 # Player information
 GET /api/v0.1/player/info
@@ -175,6 +183,7 @@ POST /api/v0.1/player/previous
 ### System Information API
 
 **New Endpoints:**
+
 ```bash
 GET /api/v0.1/system/wifi
 GET /api/v0.1/system/bluetooth
@@ -183,6 +192,7 @@ GET /api/v0.1/system/bluetooth
 ### Static Asset Serving
 
 **Endpoints:**
+
 ```bash
 GET /assets/css/style.css
 GET /assets/js/app.js
@@ -192,6 +202,7 @@ GET /assets/images/logo.png
 ### Startup Banners
 
 **7 Customizable Variants:**
+
 - Variant1: Modern detailed (default)
 - Variant2: Gradient with stats
 - Variant3: Bold block letters
@@ -201,6 +212,7 @@ GET /assets/images/logo.png
 - Variant7: Retro ASCII
 
 **Usage:**
+
 ```go
 banner.Show()        // Default (Variant1)
 banner.Variant2()    // Gradient style
@@ -213,6 +225,7 @@ banner.Variant3()    // Bold letters
 **New Package:** `internal/api/router.go`
 
 All routes registered in one place:
+
 ```go
 api.SetupRoutes()  // Registers all 18+ endpoints
 ```
@@ -224,6 +237,7 @@ api.SetupRoutes()  // Registers all 18+ endpoints
 ### Breaking Changes
 
 **Endpoints Moved to v0.1:**
+
 ```bash
 # Old (v0.0.1.2)        # New (v0.0.1.3)
 POST /player/play      → POST /api/v0.1/player/play
@@ -232,6 +246,7 @@ GET /system/wifi       → GET /api/v0.1/system/wifi
 ```
 
 **New Endpoints:**
+
 ```bash
 POST /api/signup                              # User registration
 POST /api/login                               # User login
@@ -247,6 +262,7 @@ GET /assets/*                                 # Static files
 ## 🔧 Technical Improvements
 
 ### Code Quality
+
 - ✅ Go standard project layout
 - ✅ Snake case file naming (`media_info.go`)
 - ✅ Clean import paths (`Quazaar/internal/*`)
@@ -255,19 +271,21 @@ GET /assets/*                                 # Static files
 - ✅ Comprehensive logging
 
 ### Platform Support
+
 - ✅ Linux D-Bus/MPRIS integration
 - ✅ Windows PowerShell/SMTC support (experimental)
 - ✅ Build tags for platform-specific code
 - ✅ Stub functions for unsupported platforms
 
 ### Performance
-| Metric        | v0.0.1.2 | v0.0.1.3 | Change                |
-|---------------|----------|----------|-----------------------|
-| Binary Size   | 10 MB    | 13 MB    | +30% (SQLite + auth)  |
-| Memory Usage  | ~50 MB   | ~70 MB   | +40% (database)       |
-| Startup Time  | ~100ms   | ~150ms   | +50% (DB init)        |
-| API Endpoints | 8        | 18+      | +125%                 |
-| Packages      | 1        | 10       | Modular architecture  |
+
+| Metric        | v0.0.1.2 | v0.0.1.3 | Change               |
+| ------------- | -------- | -------- | -------------------- |
+| Binary Size   | 10 MB    | 13 MB    | +30% (SQLite + auth) |
+| Memory Usage  | ~50 MB   | ~70 MB   | +40% (database)      |
+| Startup Time  | ~100ms   | ~150ms   | +50% (DB init)       |
+| API Endpoints | 8        | 18+      | +125%                |
+| Packages      | 1        | 10       | Modular architecture |
 
 ---
 
@@ -285,6 +303,7 @@ GET /assets/*                                 # Static files
 ## 🔐 Security Features
 
 ### Current
+
 - ✅ Bcrypt password hashing (cost: 10)
 - ✅ Unique username constraint
 - ✅ Unique token constraint
@@ -292,6 +311,7 @@ GET /assets/*                                 # Static files
 - ✅ No plaintext password storage
 
 ### Planned (v0.0.1.4)
+
 - [ ] Token-based endpoint protection
 - [ ] Authentication middleware
 - [ ] Token expiration enforcement
@@ -303,6 +323,7 @@ GET /assets/*                                 # Static files
 ## 📚 Documentation
 
 ### New Documentation
+
 - `docs/changelog/` - Version changelogs
 - `docs/beta/RELEASE_v0.0.1.3.md` - Complete release notes
 - Updated project structure documentation
@@ -327,11 +348,13 @@ GET /assets/*                                 # Static files
 ### From v0.0.1.2
 
 1. **Stop old Blitz server:**
+
    ```bash
    pkill blitz_v0.0.1.2
    ```
 
 2. **Run new Quazaar:**
+
    ```bash
    cd release/
    chmod +x quazaar_v0.0.1.3_linux_x64
@@ -339,6 +362,7 @@ GET /assets/*                                 # Static files
    ```
 
 3. **Register first user:**
+
    ```bash
    curl -X POST http://localhost:8765/api/signup \
      -H "Content-Type: application/json" \
@@ -354,6 +378,7 @@ GET /assets/*                                 # Static files
 ## 📦 Build Information
 
 ### Binary Details
+
 - **Filename:** `quazaar_v0.0.1.3_linux_x64`
 - **Size:** 13 MB
 - **Platform:** Linux x86-64
@@ -361,6 +386,7 @@ GET /assets/*                                 # Static files
 - **Build Command:** `go build ./cmd/server`
 
 ### Dependencies
+
 - SQLite3 (embedded)
 - D-Bus (for MPRIS)
 - bcrypt (for password hashing)
@@ -372,6 +398,7 @@ GET /assets/*                                 # Static files
 ## 🎯 What's Next (v0.0.1.4)
 
 ### Planned Features
+
 - [ ] Complete authentication middleware
 - [ ] Protected endpoints
 - [ ] Token validation
@@ -390,6 +417,7 @@ GET /assets/*                                 # Static files
 Repository: https://github.com/codershubinc/Quazaar
 
 ### Development Setup
+
 ```bash
 git clone https://github.com/codershubinc/Quazaar.git
 cd Quazaar
