@@ -9,7 +9,7 @@ A lightweight WebSocket-based remote control server for Linux systems with real-
 - **WebSocket Communication**: Fast, bidirectional communication between devices
 - **Secure Command Allowlist**: Only pre-approved commands can be executed
 - **Modern Web Interface**: Clean, responsive UI that works on desktop and mobile
-- **Auto-updating Music Info**: Track information refreshes every 3 seconds
+- **Auto-updating Music Info**: Track information refreshes every 1 seconds
 
 ## 🚀 Quick Start
 
