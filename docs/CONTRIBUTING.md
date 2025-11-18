@@ -132,11 +132,13 @@ Add Spotify artist WebSocket handlers
 2. **Make your changes** following the guidelines above
 
 3. **Test thoroughly**:
+
    - Run existing tests: `go test ./...`
    - Build successfully: `go build ./cmd/server`
    - Test manually with the web client
 
 4. **Update documentation** if needed:
+
    - Update README if adding new features
    - Add API documentation for new endpoints
    - Update changelog
