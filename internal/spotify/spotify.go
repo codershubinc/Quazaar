@@ -1,6 +1,7 @@
 package spotify
 
 import (
+	spotifyConfig "Quazaar/internal/spotify/config"
 	spotifyTokens "Quazaar/internal/spotify/tokens"
 	"Quazaar/pkg/helpers"
 	"fmt"
@@ -16,7 +17,7 @@ func Init() {
 		log.Println("⚠️  .env file not found, using system environment variables")
 	}
 
-	SpotifyAPIBaseURL = os.Getenv("SPOTIFY_API_BASE_URL")
+	spotifyConfig.SpotifyAPIBaseURL = os.Getenv("SPOTIFY_API_BASE_URL")
 
 	fmt.Println("Checking for spotify tokens .../.../.../...")
 	_, err := spotifyTokens.GetSpotifyRefreshToken()

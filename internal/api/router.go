@@ -4,8 +4,6 @@ import (
 	"Quazaar/internal/auth"
 	"Quazaar/internal/middleware"
 	"Quazaar/internal/player"
-	spotifyAuth "Quazaar/internal/spotify/auth"
-	spotifyDevices "Quazaar/internal/spotify/devices"
 	"Quazaar/internal/system"
 	"Quazaar/internal/websocket"
 	"net/http"
@@ -50,12 +48,6 @@ func SetupRoutes() {
 	// API v0.1 - System Info
 	http.HandleFunc("/api/v0.1/system/wifi", middleware.AuthenticationMiddleware(system.HandleGetWiFiInfo))
 	http.HandleFunc("/api/v0.1/system/bluetooth", middleware.AuthenticationMiddleware(system.HandleGetBluetoothDevices))
-
-	// API v0.1 -  Spotify Integration
-	http.HandleFunc("/api/v0.1/spotify/login", middleware.AuthenticationMiddleware(spotifyAuth.Login))
-	http.HandleFunc("/api/v0.1/spotify/callback", spotifyAuth.Callback)
-	http.HandleFunc("/api/v0.1/spotify/user", middleware.AuthenticationMiddleware(spotifyAuth.GetUser))
-	http.HandleFunc("/api/v0.1/spotify/devices", middleware.AuthenticationMiddleware(spotifyDevices.GetUserDevices))
 }
 
 func serveHome(w http.ResponseWriter, r *http.Request) {

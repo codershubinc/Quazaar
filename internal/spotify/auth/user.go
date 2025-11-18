@@ -8,7 +8,7 @@ import (
 	"net/url"
 	"os"
 
-	"Quazaar/internal/spotify"
+	spotifyConfig "Quazaar/internal/spotify/config"
 	spotifyTokens "Quazaar/internal/spotify/tokens"
 	"Quazaar/pkg/helpers"
 	"Quazaar/pkg/models"
@@ -23,8 +23,8 @@ type TokenResponse struct {
 }
 
 func GetUserProfile(accessToken string) (any, error) {
-	req, err := http.NewRequest("GET", spotify.SpotifyAPIBaseURL+"/me", nil)
-	fmt.Println("Req url" + spotify.SpotifyAPIBaseURL + "/me")
+	req, err := http.NewRequest("GET", spotifyConfig.SpotifyAPIBaseURL+"/me", nil)
+	fmt.Println("Req url" + spotifyConfig.SpotifyAPIBaseURL + "/me")
 	if err != nil {
 		return any(nil), err
 	}

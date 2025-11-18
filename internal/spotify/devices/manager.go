@@ -1,7 +1,7 @@
 package spotifyDevices
 
 import (
-	"Quazaar/internal/spotify"
+	spotifyConfig "Quazaar/internal/spotify/config"
 	spotifyTokens "Quazaar/internal/spotify/tokens"
 	"encoding/json"
 	"net/http"
@@ -19,7 +19,7 @@ import (
 //   - Active status and volume level
 //   - Playback restrictions and capabilities
 func getUserDevices() any {
-	endpoint := spotify.SpotifyAPIBaseURL + "/me/player/devices"
+	endpoint := spotifyConfig.SpotifyAPIBaseURL + "/me/player/devices"
 
 	req, _ := http.NewRequest("GET", endpoint, nil)
 

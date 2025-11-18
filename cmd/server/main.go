@@ -45,6 +45,9 @@ func main() {
 	// Setup all API routes
 	api.SetupRoutes()
 
+	// Setup Spotify routes
+	spotify.SetupRoutes()
+
 	// Start media poller
 	go poller.Handle()
 
