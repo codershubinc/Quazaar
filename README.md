@@ -1,4 +1,4 @@
-# ⚡ Blitz
+# ⚡ Quazaar
 
 A lightweight WebSocket-based remote control server for Linux systems with real-time music player integration.
 
@@ -9,7 +9,7 @@ A lightweight WebSocket-based remote control server for Linux systems with real-
 - **WebSocket Communication**: Fast, bidirectional communication between devices
 - **Secure Command Allowlist**: Only pre-approved commands can be executed
 - **Modern Web Interface**: Clean, responsive UI that works on desktop and mobile
-- **Auto-updating Music Info**: Track information refreshes every 3 seconds
+- **Auto-updating Music Info**: Track information refreshes every 1 seconds
 
 ## 🚀 Quick Start
 
@@ -31,8 +31,8 @@ A lightweight WebSocket-based remote control server for Linux systems with real-
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/codershubinc/Blitz.git
-   cd Blitz
+   git clone https://github.com/codershubinc/Quazaar.git
+   cd Quazaar
    ```
 
 2. **Install dependencies**
@@ -44,12 +44,12 @@ A lightweight WebSocket-based remote control server for Linux systems with real-
 3. **Build the server**
 
    ```bash
-   go build -o blitz
+   go build -o quazaar
    ```
 
 4. **Run the server**
    ```bash
-   ./blitz
+   ./quazaar
    ```
 
 The server will start on `ws://0.0.0.0:8765/ws`
@@ -59,7 +59,7 @@ The server will start on `ws://0.0.0.0:8765/ws`
 1. **Start the server** on your PC
 
    ```bash
-   ./blitz
+   ./quazaar
    ```
 
 2. **Open `remote.html`** in a browser on any device
@@ -76,7 +76,7 @@ The server will start on `ws://0.0.0.0:8765/ws`
 
 ## 🎵 Music Integration
 
-Blitz automatically displays your currently playing music using `playerctl`. It shows:
+Quazaar automatically displays your currently playing music using `playerctl`. It shows:
 
 - **Track name** and **artist**
 - **Playback status** (Playing/Paused)
@@ -168,7 +168,7 @@ The web interface is fully responsive and works great on mobile devices:
 ### Project Structure
 
 ```
-Blitz/
+Quazaar/
 ├── main.go         # WebSocket server and command handler
 ├── remote.html     # Web-based remote control interface
 ├── go.mod          # Go module dependencies
@@ -177,14 +177,9 @@ Blitz/
 
 ### Building for Production
 
-```bash
-# Build with optimizations
-go build -ldflags="-s -w" -o blitz
-
-# Cross-compile for different architectures
-GOOS=linux GOARCH=amd64 go build -o blitz-linux-amd64
-GOOS=linux GOARCH=arm64 go build -o blitz-linux-arm64
-```
+go build -ldflags="-s -w" -o quazaar
+GOOS=linux GOARCH=amd64 go build -o quazaar-linux-amd64
+GOOS=linux GOARCH=arm64 go build -o quazaar-linux-arm64
 
 ## 🐛 Troubleshooting
 
@@ -213,7 +208,7 @@ GOOS=linux GOARCH=arm64 go build -o blitz-linux-arm64
 
 ## 📝 License
 
-This project is open source. Feel free to use, modify, and distribute as needed.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🤝 Contributing
 
