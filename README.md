@@ -3,7 +3,7 @@
 Real-time music player integration.
 With WebSocket remote control for Linux.
 
-`As it in developmental phase. Expect bugs and breaking changes. Also refer the beta branch for active changes.`
+`As it in developmental phase. Expect bugs and breaking changes. Also refer the beta branch for active changes`
 
 ## 🎯 Features
 
