@@ -54,7 +54,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	authURL := "https://accounts.spotify.com/authorize?" + url.Values{
 		"response_type": {"code"},
 		"client_id":     {getClientID()},
-		"scope":         {"user-read-private user-read-email user-read-currently-playing user-read-playback-state user-read-recently-played user-follow-read user-library-read user-modify-playback-state"},
+		"scope":         {"user-read-private user-read-email user-read-currently-playing user-read-playback-state user-read-recently-played user-follow-read user-library-read user-modify-playback-state user-follow-modify"},
 		"redirect_uri":  {getRedirectURI()},
 		"state":         {state},
 	}.Encode()
