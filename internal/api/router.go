@@ -5,6 +5,7 @@ import (
 	"Quazaar/internal/middleware"
 	"Quazaar/internal/player"
 	spotifyArtist "Quazaar/internal/spotify/artist"
+	spotifyAuth "Quazaar/internal/spotify/auth"
 	"Quazaar/internal/system"
 	"Quazaar/internal/websocket"
 	"net/http"
@@ -52,6 +53,7 @@ func SetupRoutes() {
 
 	http.HandleFunc("/api/v0.1/spotify/artist", middleware.AuthenticationMiddleware(spotifyArtist.GetArtistInfo))
 	http.HandleFunc("/api/v0.1/spotify/artist/follow", middleware.AuthenticationMiddleware(spotifyArtist.FollowArtist))
+	http.HandleFunc("/api/v0.1/spotify/me", middleware.AuthenticationMiddleware(spotifyAuth.GetUser))
 }
 
 func serveHome(w http.ResponseWriter, r *http.Request) {

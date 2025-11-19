@@ -5,6 +5,15 @@ With WebSocket remote control for Linux.
 
 `As it in developmental phase. Expect bugs and breaking changes. Also refer the beta branch for active changes`
 
+---
+
+`Android app update , Beta version is out check `[Quazaar App Download](https://github.com/codershubinc/QuazaarApp/releases/download/v0.1.0-beta/Quazaar_v0.1.0-beta.apk) `
+
+`for using the app with server refer 
+`[docs/beta/README.md](docs/beta/README.md)
+
+---
+
 ## 🎯 Features
 
 - **Remote Command Execution**: Control your PC from any device on your network
