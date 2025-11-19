@@ -1,6 +1,6 @@
 # Quazaar Android App - v0.1.0-beta
 
-**Official Android client for Quazaar media control server**
+**Official Android client (good For Tablet as of now) for Quazaar media control server**
 
 [Download APK v0.1.0-beta](https://github.com/codershubinc/QuazaarApp/releases/download/v0.1.0-beta/Quazaar_v0.1.0-beta.apk)
 
