@@ -15,9 +15,12 @@ func RequestTempFileShareAccept(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to create temp URI", http.StatusInternalServerError)
 		return
 	}
-
-	// Redirect to f^king  the temp URI
-	http.Redirect(w, r, "http://192.168.1.106:8765"+tempUri, http.StatusTemporaryRedirect)
+	helpers.SendJsonDataToClient(w, 200, map[string]any{
+		"acceptUri": tempUri,
+		"message":   "Temporary file share URI created successfully",
+		"expiry":    3600,
+		"time":      http.TimeFormat,
+	})
 }
 
 func HandleTempFileShareAccept(w http.ResponseWriter, r *http.Request) {
@@ -54,7 +57,5 @@ func HandleTempFileShareAccept(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to store file", http.StatusInternalServerError)
 		return
 	}
-	// Token is valid, proceed with file acceptance logic
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("File acceptance authorized , file stored successfully"))
 }

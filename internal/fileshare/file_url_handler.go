@@ -14,16 +14,18 @@ func CreateFileAcceptTempUri() (string, error) {
 	if err != nil {
 		return "", err
 	}
+	expiryTime := 3600 // seconds
 
-	err = db.StoreFileShareDeviceToken(token, dId, 0)
+	err = db.StoreFileShareDeviceToken(token, dId, expiryTime)
 	if err != nil {
 		return "", err
 	}
-	return "/filesharetest?deviceId=" + dId + "&token=" + token, nil
+	return "/api/v0.1/fileshare/acceptfile?deviceId=" + dId + "&token=" + token, nil
 }
 
 func ValidateFileAcceptTempUri(deviceId, token string) bool {
 	storedDeviceId, err := db.GetFileShareDeviceToken(token)
+
 	if err != nil {
 		return false
 	}
