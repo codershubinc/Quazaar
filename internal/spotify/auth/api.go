@@ -25,7 +25,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	// Fetch user profile from Spotify API
 	user, err := GetUserProfile(tk)
 	if err != nil {
-		fmt.Println("Err", err)
+		fmt.Println("Err ", err)
 		http.Error(w, "Failed to get Spotify user profile", http.StatusInternalServerError)
 		return
 	}

@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
@@ -24,21 +25,49 @@ type TokenResponse struct {
 
 func GetUserProfile(accessToken string) (any, error) {
 	req, err := http.NewRequest("GET", spotifyConfig.SpotifyAPIBaseURL+"/me", nil)
-	fmt.Println("Req url" + spotifyConfig.SpotifyAPIBaseURL + "/me")
 	if err != nil {
 		return any(nil), err
 	}
 	req.Header.Set("Authorization", "Bearer "+accessToken)
+
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
+		fmt.Println("Err at GetUserProfile :: ", err)
 		return any(nil), err
 	}
 	defer resp.Body.Close()
-	var user models.SpotifyUser
-	if err := json.NewDecoder(resp.Body).Decode(&user); err != nil {
+
+	// Read the raw response body first
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Println("Err reading response body :: ", err)
 		return any(nil), err
 	}
+
+	// Check if the response is successful
+	if resp.StatusCode != http.StatusOK {
+		fmt.Printf("Spotify API returned status %d for /me endpoint\n", resp.StatusCode)
+		fmt.Printf("Response body: %s\n", string(bodyBytes))
+
+		// Try to parse as JSON error response
+		var errorResp map[string]interface{}
+		if err := json.Unmarshal(bodyBytes, &errorResp); err == nil {
+			fmt.Printf("Spotify error response: %+v\n", errorResp)
+		}
+
+		return any(nil), fmt.Errorf("spotify API returned status %d: %s", resp.StatusCode, string(bodyBytes))
+	}
+
+	// Decode JSON response directly into user struct
+	var user models.SpotifyUser
+	if err := json.Unmarshal(bodyBytes, &user); err != nil {
+		fmt.Println("Err at GetUserProfile Decode :: ", err)
+		fmt.Printf("Response body: %s\n", string(bodyBytes))
+		return any(nil), err
+	}
+
+	fmt.Printf("Successfully retrieved user profile: %s\n", user.ID)
 	return user, nil
 }
 
