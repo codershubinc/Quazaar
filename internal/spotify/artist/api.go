@@ -19,7 +19,7 @@ func GetArtistInfo(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to get artist info", http.StatusInternalServerError)
 		return
 	}
-	helpers.SendJsonDataToClient(w, res, data)
+	helpers.SendJsonDataToClient(w, res.StatusCode, data)
 
 	defer r.Body.Close()
 }

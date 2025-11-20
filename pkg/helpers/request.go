@@ -53,9 +53,9 @@ func GetParsedRequestData(resp *http.Response) (any, error) {
 	return data, nil
 }
 
-func SendJsonDataToClient(w http.ResponseWriter, req *http.Response, data any) error {
+func SendJsonDataToClient(w http.ResponseWriter, statusCode int, data any) error {
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(req.StatusCode)
+	w.WriteHeader(statusCode)
 	defer w.(http.Flusher).Flush()
 	return json.NewEncoder(w).Encode(data)
 }
