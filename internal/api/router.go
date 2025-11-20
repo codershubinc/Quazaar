@@ -2,6 +2,7 @@ package api
 
 import (
 	"Quazaar/internal/auth"
+	fileShare "Quazaar/internal/fileshare"
 	"Quazaar/internal/middleware"
 	"Quazaar/internal/player"
 	spotifyArtist "Quazaar/internal/spotify/artist"
@@ -15,6 +16,7 @@ import (
 func SetupRoutes() {
 	// Root
 	http.HandleFunc("/", serveHome)
+	http.HandleFunc("/filesharetest", serveFileShareTestPage)
 
 	// WebSocket
 	http.HandleFunc("/ws", middleware.AuthenticationMiddleware(websocket.Handle))
@@ -54,6 +56,10 @@ func SetupRoutes() {
 	http.HandleFunc("/api/v0.1/spotify/artist", middleware.AuthenticationMiddleware(spotifyArtist.GetArtistInfo))
 	http.HandleFunc("/api/v0.1/spotify/artist/follow", middleware.AuthenticationMiddleware(spotifyArtist.FollowArtist))
 	http.HandleFunc("/api/v0.1/spotify/me", middleware.AuthenticationMiddleware(spotifyAuth.GetUser))
+
+	// API v0.1 - File Share
+	http.HandleFunc("/api/v0.1/fileshare/create-accept-uri", fileShare.RequestTempFileShareAccept)
+	http.HandleFunc("/api/v0.1/fileshare/acceptfile", fileShare.HandleTempFileShareAccept)
 }
 
 func serveHome(w http.ResponseWriter, r *http.Request) {
@@ -66,4 +72,16 @@ func serveHome(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	http.ServeFile(w, r, "temp/web/index.html")
+}
+
+func serveFileShareTestPage(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/filesharetest" {
+		http.Error(w, "Not found", http.StatusNotFound)
+		return
+	}
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	http.ServeFile(w, r, "temp/fileshare_test.html")
 }

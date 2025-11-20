@@ -81,6 +81,13 @@ func createTables() error {
 		deviceId TEXT,
 		expiry NUMERIC
 	);`
+	fileShareDeviceTokenTable := `
+	CREATE TABLE IF NOT EXISTS file_share_device_tokens (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,  
+		token TEXT NOT NULL UNIQUE,
+		deviceId TEXT,
+		expiry NUMERIC
+	);`
 
 	// Execute users table creation
 	if _, err := DB.Exec(userTable); err != nil {
@@ -95,6 +102,12 @@ func createTables() error {
 		return err
 	}
 	log.Println("✅ Tokens table ready")
+	// Execute file share device tokens table creation
+	if _, err := DB.Exec(fileShareDeviceTokenTable); err != nil {
+		log.Println("❌ Failed to create file_share_device_tokens table:", err)
+		return err
+	}
+	log.Println("✅ File Share Device Tokens table ready")
 
 	// Create indexes for faster searches
 	indexSQL := `
