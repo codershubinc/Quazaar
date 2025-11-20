@@ -149,6 +149,7 @@ GET /api/v0.1/fileshare/create-accept-uri
 ```
 
 **Response:**
+
 ```json
 {
   "acceptUri": "/api/v0.1/fileshare/acceptfile?deviceId={id}&token={token}",
@@ -168,12 +169,14 @@ file: [binary data]
 ```
 
 **Success Response:**
+
 ```
 HTTP/1.1 200 OK
 File acceptance authorized, file stored successfully
 ```
 
 **Error Responses:**
+
 - `401 Unauthorized` - Invalid or expired token
 - `400 Bad Request` - Failed to parse form or missing file
 - `500 Internal Server Error` - File storage failure
@@ -260,6 +263,7 @@ curl -X POST \
 ## ✅ Summary
 
 v0.1.4 successfully introduces a secure, token-based file sharing system with:
+
 - Complete file upload API with validation
 - Time-limited, single-use access tokens
 - Interactive HTML test interface with progress tracking
