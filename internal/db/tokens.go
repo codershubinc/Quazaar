@@ -1,5 +1,10 @@
 package db
 
+import (
+	"fmt"
+	"time"
+)
+
 func GetToken(tokenType string) (string, error) {
 	var token string
 	err := DB.QueryRow("SELECT token FROM tokens WHERE tokenType = ? ORDER BY id DESC LIMIT 1", tokenType).Scan(&token)
@@ -20,9 +25,17 @@ func StoreFileShareDeviceToken(token, deviceId string, expiry int) error {
 
 func GetFileShareDeviceToken(token string) (string, error) {
 	var deviceId string
-	err := DB.QueryRow("SELECT deviceId FROM file_share_device_tokens WHERE token = ? LIMIT 1", token).Scan(&deviceId)
+	var expiry int
+	var createdAt time.Time
+	err := DB.QueryRow("SELECT deviceId , expiry, createdAt FROM file_share_device_tokens WHERE token = ? LIMIT 1", token).Scan(&deviceId, &expiry, &createdAt)
 	if err != nil {
 		return "", err
+	}
+	if expiry > 0 {
+		timeStored := time.Now().Add(-time.Duration(expiry) * time.Second)
+		if timeStored.After(createdAt) {
+			return "", fmt.Errorf("token expired")
+		}
 	}
 	return deviceId, nil
 }
