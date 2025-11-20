@@ -15,14 +15,11 @@ func RequestTempFileShareAccept(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to create temp URI", http.StatusInternalServerError)
 		return
 	}
-
-	// Redirect to f^king  the temp URI
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	helpers.SendJsonDataToClient(w, 200, map[string]string{
+	helpers.SendJsonDataToClient(w, 200, map[string]any{
 		"acceptUri": tempUri,
 		"message":   "Temporary file share URI created successfully",
-		"expiry":    "This URI is valid for one-time use only. And will expire after 60 minutes.",
+		"expiry":    3600,
+		"time":      http.TimeFormat,
 	})
 }
 
