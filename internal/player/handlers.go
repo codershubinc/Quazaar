@@ -1,9 +1,8 @@
-
 package player
 
 import (
-	"Quazaar/pkg/helpers"
 	"Quazaar/internal/media"
+	"Quazaar/pkg/helpers"
 	"encoding/json"
 	"fmt"
 	"log"
