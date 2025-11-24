@@ -127,6 +127,9 @@ func createTables() error {
 func CloseDB() error {
 	if DB != nil {
 		log.Println("🔒 Closing database connection...")
+		log.Println("🔒 Closing database connection...")
+		log.Println("🔒 Closing database connection...")
+		log.Println("🔒 Closing database connection...")
 		return DB.Close()
 	}
 	return nil

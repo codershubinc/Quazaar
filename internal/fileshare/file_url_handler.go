@@ -26,8 +26,8 @@ func CreateFileAcceptTempUri() (string, error) {
 
 func ValidateFileAcceptTempUri(deviceId, token string) bool {
 	storedDeviceId, storedToken, err := db.GetFileShareDeviceToken(token)
-	log.Println("🔑 Validating Token - DeviceID:", deviceId, "Token:", token)
-	log.Println("🔑 Stored DeviceID from DB:", storedDeviceId)
+	// log.Println("🔑 Validating Token - DeviceID:", deviceId, "Token:", token)
+	// log.Println("🔑 Stored DeviceID from DB:", storedDeviceId)
 
 	if err != nil {
 		log.Println("❌ Error validating token:", err)
