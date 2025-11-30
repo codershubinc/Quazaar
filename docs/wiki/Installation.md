@@ -5,7 +5,9 @@
 - **Go**: Version 1.21 or higher.
 - **Git**: For cloning the repository.
 - **Music Player Support**:
+
   - **Linux**: `playerctl` is recommended for MPRIS integration.
+
     ```bash
     # Arch Linux
     sudo pacman -S playerctl
@@ -13,27 +15,32 @@
     # Ubuntu/Debian
     sudo apt install playerctl
     ```
+
   - **Windows**: No additional dependencies required.
 
 ## Installation Steps
 
 1. **Clone the Repository**
+
    ```bash
    git clone https://github.com/codershubinc/Quazaar.git
    cd Quazaar
    ```
 
 2. **Download Dependencies**
+
    ```bash
    go mod download
    ```
 
 3. **Build the Server**
+
    ```bash
    go build -o quazaar ./cmd/server
    ```
 
 4. **Run the Server**
+
    ```bash
    ./quazaar
    ```

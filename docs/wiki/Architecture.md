@@ -4,7 +4,7 @@ Quazaar follows the standard Go project layout, organizing code into logical lay
 
 ## 📂 Directory Structure
 
-```
+```text
 Quazaar/
 ├── cmd/                    # Application entry points
 │   └── server/             # Main server application
@@ -35,9 +35,11 @@ Quazaar/
 ## 🏗️ Core Components
 
 ### 1. Server (`cmd/server`)
+
 The entry point of the application. It initializes the database, sets up the HTTP router, starts the WebSocket handler, and launches the background poller.
 
 ### 2. Internal Packages (`internal/`)
+
 - **`api`**: Defines the HTTP routes and links them to handlers.
 - **`auth`**: Manages user registration, login, and JWT/token generation.
 - **`db`**: Handles SQLite database connections and migrations.
@@ -46,6 +48,7 @@ The entry point of the application. It initializes the database, sets up the HTT
 - **`poller`**: Periodically checks for media changes and broadcasts updates to connected WebSocket clients.
 
 ### 3. Shared Packages (`pkg/`)
+
 - **`models`**: Defines the structs used for API responses and database records, ensuring consistency across the app.
 - **`helpers`**: Provides common utility functions to reduce code duplication.
 
@@ -60,6 +63,7 @@ The entry point of the application. It initializes the database, sets up the HTT
 ## 🗄️ Database Schema
 
 Quazaar uses SQLite with the following main tables:
+
 - **`users`**: Stores user credentials (hashed passwords).
 - **`tokens`**: Manages authentication tokens for devices.
 - **`file_share_device_tokens`**: Manages temporary tokens for file sharing.
