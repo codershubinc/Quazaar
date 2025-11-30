@@ -1,3 +1,5 @@
 temp/
 .env
 /assets/gm
+# Added by goreleaser init:
+dist/

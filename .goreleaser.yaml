@@ -1,0 +1,42 @@
+# 1. Fix the version error
+version: 2
+
+project_name: Quazaar
+
+builds:
+  - id: quazaar
+    # 2. Fix the main function error
+    # Point this to the folder containing your main.go
+    # If it is in root, keep it as "."
+    # If it is in cmd, change to "./cmd/quazaar"
+    main: ./cmd/server
+
+    binary: Quazaar
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+    goarch:
+      - amd64
+      - arm64
+nfpms:
+  - # The package name
+    id: "./cmd/quazaar"
+    package_name: quazaar
+
+    # Your formats (deb for Debian/Ubuntu, rpm for Fedora/RedHat)
+    formats:
+      - deb
+      - rpm
+
+    # Metadata
+    vendor: "CodersHubInc"
+    homepage: "https://github.com/codershubinc/quazaar"
+    maintainer: "Swapnil Ingle <ingleswapnil2004@gmail.com>"
+    description: "A cross-platform LAN media control system using WebSockets"
+    license: "MIT"
+
+    # Dependencies (optional, but good for completeness)
+    dependencies:
+      - git
