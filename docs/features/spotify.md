@@ -1,5 +1,26 @@
 # Quazaar - Spotify Integration
 
+## Architecture
+
+```mermaid
+graph TD
+    User[User] -->|1. Auth Request| Server[Quazaar Server]
+    Server -->|2. Redirect| SpotifyAuth[Spotify Auth Page]
+    SpotifyAuth -->|3. Callback Code| Server
+    Server -->|4. Exchange Code| SpotifyAPI[Spotify API]
+    SpotifyAPI -->|5. Access/Refresh Token| Server
+    
+    subgraph "Runtime"
+        Poller[Media Poller] -->|Poll| SpotifyAPI
+        SpotifyAPI -->|Track Data| Poller
+        Poller -->|Broadcast| WS[WebSocket]
+        WS -->|Update UI| User
+        
+        User -->|Command (Play/Pause)| WS
+        WS -->|API Call| SpotifyAPI
+    end
+```
+
 ## Setup Spotify API
 
 1. Go to [Spotify Developer Dashboard](https://developer.spotify.com/dashboard/applications)
