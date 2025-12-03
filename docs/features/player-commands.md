@@ -12,21 +12,21 @@ The player command system allows WebSocket clients to control media playback thr
 graph TD
     Client[Web Client] -->|JSON Command| WS[WebSocket Handler]
     WS -->|Parse| CmdHandler[Player Command Handler]
-    
+
     CmdHandler -->|Switch Command| Router{Command Type}
-    
+
     Router -->|play| Play[Playerctl Play]
     Router -->|pause| Pause[Playerctl Pause]
     Router -->|next| Next[Playerctl Next]
     Router -->|prev| Prev[Playerctl Previous]
     Router -->|volume| Vol[Playerctl Volume]
-    
+
     Play --> Exec[Execute System Process]
     Pause --> Exec
     Next --> Exec
     Prev --> Exec
     Vol --> Exec
-    
+
     Exec -->|Result/Error| Response[Construct Response]
     Response -->|JSON| WS
     WS -->|Send| Client

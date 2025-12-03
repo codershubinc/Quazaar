@@ -9,13 +9,13 @@ graph TD
     SpotifyAuth -->|3. Callback Code| Server
     Server -->|4. Exchange Code| SpotifyAPI[Spotify API]
     SpotifyAPI -->|5. Access/Refresh Token| Server
-    
+
     subgraph "Runtime"
         Poller[Media Poller] -->|Poll| SpotifyAPI
         SpotifyAPI -->|Track Data| Poller
         Poller -->|Broadcast| WS[WebSocket]
         WS -->|Update UI| User
-        
+
         User -->|Command (Play/Pause)| WS
         WS -->|API Call| SpotifyAPI
     end

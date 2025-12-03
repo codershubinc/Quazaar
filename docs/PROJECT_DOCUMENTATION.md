@@ -165,4 +165,4 @@ We welcome contributions! Please read our [Contributing Guide](../CONTRIBUTING.m
 
 ---
 
-*Documentation generated on December 4, 2025.*
+_Documentation generated on December 4, 2025._
