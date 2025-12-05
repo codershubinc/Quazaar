@@ -1,10 +1,9 @@
-
 package poller
 
 import (
-	"Quazaar/pkg/models"
 	"Quazaar/internal/media"
 	"Quazaar/internal/websocket"
+	"Quazaar/pkg/models"
 	"fmt"
 	"time"
 )

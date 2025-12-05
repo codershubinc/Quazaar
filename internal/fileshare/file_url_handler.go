@@ -3,6 +3,7 @@ package fileShare
 import (
 	"Quazaar/internal/db"
 	"Quazaar/pkg/helpers"
+	"log"
 )
 
 func CreateFileAcceptTempUri() (string, error) {
@@ -24,12 +25,15 @@ func CreateFileAcceptTempUri() (string, error) {
 }
 
 func ValidateFileAcceptTempUri(deviceId, token string) bool {
-	storedDeviceId, err := db.GetFileShareDeviceToken(token)
+	storedDeviceId, storedToken, err := db.GetFileShareDeviceToken(token)
+	// log.Println("🔑 Validating Token - DeviceID:", deviceId, "Token:", token)
+	// log.Println("🔑 Stored DeviceID from DB:", storedDeviceId)
 
 	if err != nil {
+		log.Println("❌ Error validating token:", err)
 		return false
 	}
-	if storedDeviceId != deviceId {
+	if storedDeviceId != deviceId || storedToken != token {
 		return false
 	}
 	return true
