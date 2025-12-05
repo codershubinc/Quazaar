@@ -1,4 +1,4 @@
-# Quazaar - Spotify Integration
+# Spotify Integration
 
 ## Architecture
 
@@ -21,169 +21,40 @@ graph TD
     end
 ```
 
-## Setup Spotify API
+## Getting Started
 
-1. Go to [Spotify Developer Dashboard](https://developer.spotify.com/dashboard/applications)
-2. Create a new app
-3. Add redirect URI: `http://localhost:8765/spotify/callback`
-4. Copy your Client ID and Client Secret
-5. Create `.env` file from `.env.example`:
-
-   ```bash
-
-   cp .env.example .env
-
-   ```
-
-6. Add your credentials to `.env` file
-
-## Environment Variables
+1. **Create App**: Go to [Spotify Developer Dashboard](https://developer.spotify.com/dashboard/applications) and create an app.
+2. **Configure**: Set Redirect URI to `http://localhost:8765/spotify/callback`.
+3. **Environment**: Add credentials to your `.env` file:
 
 ```bash
-export SPOTIFY_CLIENT_ID="your_client_id_here"
-export SPOTIFY_CLIENT_SECRET="your_client_secret_here"
+export SPOTIFY_CLIENT_ID="your_client_id"
+export SPOTIFY_CLIENT_SECRET="your_client_secret"
 export SPOTIFY_REDIRECT_URI="http://localhost:8765/spotify/callback"
 ```
 
-Or source from `.env`:
+## Authentication
 
-```bash
-export $(cat .env | xargs)
-```
+Navigate to `http://localhost:8765/spotify/auth` to login and grant permissions.
 
-## Running with Spotify
+## Features & Commands
 
-```bash
-# Set environment variables
-export $(cat .env | xargs)
+The integration supports the following WebSocket commands:
 
-# Build and run
-go build -o quazaar
-./quazaar
-```
+| Command | Description | Payload |
+|---------|-------------|---------|
+| `spotify_auth_status` | Check if user is authenticated | None |
+| `spotify_current_track` | Get currently playing track info | None |
+| `spotify_play` | Resume playback | `{"device_id": "..."}` (optional) |
+| `spotify_pause` | Pause playback | None |
+| `spotify_next` | Skip to next track | None |
+| `spotify_previous` | Skip to previous track | None |
+| `spotify_volume` | Set volume (0-100) | `{"volume": 50}` |
+| `spotify_playlists` | List user playlists | None |
 
-## Authentication Flow
+## Scopes
 
-1. Navigate to: `http://localhost:8765/spotify/auth`
-2. Login with your Spotify account
-3. Grant permissions
-4. You'll be redirected back with authentication
-
-## WebSocket Commands
-
-### Authentication Status
-
-```json
-{
-  "command": "spotify_auth_status"
-}
-```
-
-### Get Current Track
-
-```json
-{
-  "command": "spotify_current_track"
-}
-```
-
-### Playback Controls
-
-```json
-{
-  "command": "spotify_play",
-  "device_id": "optional_device_id"
-}
-
-{
-  "command": "spotify_pause"
-}
-
-{
-  "command": "spotify_next"
-}
-
-{
-  "command": "spotify_previous"
-}
-```
-
-### Volume Control (0-100)
-
-```json
-{
-  "command": "spotify_volume",
-  "volume": 50,
-  "device_id": "optional_device_id"
-}
-```
-
-### Get Playlists
-
-```json
-{
-  "command": "spotify_playlists"
-}
-```
-
-## Response Format
-
-### Current Track
-
-```json
-{
-  "status": "spotify_track",
-  "spotify_track": {
-    "id": "track_id",
-    "name": "Track Name",
-    "artists": ["Artist 1", "Artist 2"],
-    "album": "Album Name",
-    "album_art": "https://...",
-    "duration_ms": 240000,
-    "progress_ms": 60000,
-    "is_playing": true,
-    "uri": "spotify:track:...",
-    "popularity": 85
-  }
-}
-```
-
-### Playlists
-
-```json
-{
-  "status": "spotify_playlists",
-  "output": [
-    {
-      "id": "playlist_id",
-      "name": "Playlist Name",
-      "description": "Description",
-      "track_count": 50,
-      "image_url": "https://...",
-      "uri": "spotify:playlist:..."
-    }
-  ]
-}
-```
-
-## Features
-
-- ✅ OAuth 2.0 authentication flow
-- ✅ Automatic token refresh
-- ✅ Get currently playing track with full metadata
-- ✅ Playback controls (play/pause/next/previous)
-- ✅ Volume control
-- ✅ Get user playlists
-- ✅ Device-specific controls
-- ✅ Error handling and status reporting
-
-## Scopes Requested
-
-- `user-read-playback-state` - Read current playback state
-- `user-modify-playback-state` - Control playback
-- `user-read-currently-playing` - Read currently playing track
-- `playlist-read-private` - Read private playlists
-- `playlist-read-collaborative` - Read collaborative playlists
-- `user-library-read` - Read saved tracks
-- `user-top-read` - Read top tracks/artists
-- `user-read-recently-played` - Read recently played tracks
+The application requests permissions for:
+- Playback control & state reading
+- Library & Playlist access
+- User top/recent tracks
