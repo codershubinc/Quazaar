@@ -2,6 +2,34 @@
 
 ## ✅ What's Been Delivered
 
+### Architecture
+
+```mermaid
+graph TB
+    User((User))
+    subgraph "Auth System"
+        API[API Handlers]
+        Auth[Auth Logic]
+        DB[(SQLite DB)]
+    end
+
+    User -->|1. Register| API
+    API -->|Hash Password| Auth
+    Auth -->|Store User| DB
+
+    User -->|2. Login| API
+    API -->|Verify Password| Auth
+    Auth -->|Generate Token| Auth
+    Auth -->|Store Token| DB
+    API -->>|Return Token| User
+
+    User -->|3. API Request + Token| API
+    API -->|Validate Token| Auth
+    Auth -->|Check DB| DB
+    DB -->>|Valid/Invalid| Auth
+    Auth -->>|Allow/Deny| API
+```
+
 ### Code Files Created/Updated
 
 ```

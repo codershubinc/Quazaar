@@ -1,27 +1,32 @@
 # ⚡ Quazaar
 
-Real-time music player integration.
-With WebSocket remote control for Linux.
+Real-time music player integration with WebSocket remote control for Linux.
 
-`As it in developmental phase. Expect bugs and breaking changes. Also refer the beta branch for active changes`
+> **Note**: This project is in a developmental phase. Expect bugs and breaking changes. Refer to the beta branch for active changes.
 
 ---
 
-`Android app update , Beta version is out check `[Quazaar App Download](https://github.com/codershubinc/QuazaarApp/releases/download/v0.1.0-beta/Quazaar_v0.1.0-beta.apk) `
+📱 **Android App Update**: Beta version is out! [Download Quazaar App v0.1.0-beta](https://github.com/codershubinc/QuazaarApp/releases/download/v0.1.0-beta/Quazaar_v0.1.0-beta.apk)
+For using the app with the server, refer to [docs/beta/README.md](docs/beta/README.md).
 
-`for using the app with server refer 
-`[docs/beta/README.md](docs/beta/README.md)
+---
+
+## 📚 Documentation
+
+For the complete project documentation, including architecture, development journey, and detailed guides, please visit:
+
+👉 **[Project Documentation & Journey](docs/PROJECT_DOCUMENTATION.md)** 👈
 
 ---
 
 ## 🎯 Features
 
-- **Remote Command Execution**: Control your PC from any device on your network
-- **Real-time Music Display**: Shows currently playing track with album artwork using `playerctl`
-- **WebSocket Communication**: Fast, bidirectional communication between devices
-- **Secure Command Allowlist**: Only pre-approved commands can be executed
-- **Modern Web Interface**: Clean, responsive UI that works on desktop and mobile
-- **Auto-updating Music Info**: Track information refreshes every 1 seconds
+- **Remote Command Execution**: Control your PC from any device on your network.
+- **Real-time Music Display**: Shows currently playing track with album artwork using `playerctl`.
+- **WebSocket Communication**: Fast, bidirectional communication between devices.
+- **Secure Command Allowlist**: Only pre-approved commands can be executed.
+- **Modern Web Interface**: Clean, responsive UI that works on desktop and mobile.
+- **Auto-updating Music Info**: Track information refreshes every 1 second.
 
 ## 🚀 Quick Start
 
@@ -38,7 +43,7 @@ With WebSocket remote control for Linux.
   sudo apt install playerctl
   ```
 
-### Installation
+### Installation & Run
 
 1. **Clone the repository**
 
@@ -56,57 +61,29 @@ With WebSocket remote control for Linux.
 3. **Build the server**
 
    ```bash
-   go build -o quazaar
+   go build -o quazaar ./cmd/server
    ```
 
 4. **Run the server**
-   ```bash
-   ./quazaar
-   ```
-
-The server will start on `ws://0.0.0.0:8765/ws`
-
-### Usage
-
-1. **Start the server** on your PC
 
    ```bash
    ./quazaar
    ```
 
-# ⚡ Quazaar
+The server will start on `ws://0.0.0.0:8765/ws` (default).
 
-Quazaar is a lightweight WebSocket-based remote control server for Linux with optional music/player integration (Spotify, MPRIS).
+## 📂 Where to look next
 
-This repository contains the server, WebSocket handlers, and example web client.
+- **[docs/PROJECT_DOCUMENTATION.md](docs/PROJECT_DOCUMENTATION.md)** — **Start Here!** Full project overview and journey.
+- `docs/` — Full integration guides, API reference, and troubleshooting.
+- `internal/spotify/` — Spotify integration and token management.
+- `temp/web/` — Example web client for manual testing.
 
-For full documentation, configuration details, and guides see the `docs/` folder.
+## 🤝 Contributing
 
-## Quick Start
+Contributions and issues are welcome — please open a GitHub issue or PR. See `CONTRIBUTING.md` for details.
 
-Build and run:
-
-```bash
-git clone https://github.com/codershubinc/Quazaar.git
-cd Quazaar
-go mod download
-go build -o quazaar ./cmd/server
-./quazaar
-```
-
-Default server address: `127.0.0.1:8765` (change via environment variables or `cmd/server`).
-
-## Where to look next
-
-- `docs/` — Full integration guides, API reference, and troubleshooting
-- `internal/spotify/` — Spotify integration and token management
-- `temp/web/` — Example web client for manual testing
-
-## Contributing
-
-Contributions and issues are welcome — please open a GitHub issue or PR. See `docs/CONTRIBUTING.md` if present.
-
-## License
+## 📄 License
 
 This project is licensed under the MIT License - see the `LICENSE` file for details.
 
