@@ -23,7 +23,7 @@ func main() {
 
 	// Display startup banner
 	// Options: banner.Variant1(), banner.Variant2(), banner.Variant3(), banner.Variant4()
-	banner.Show() // Uses Variant1 by default
+	banner.Show()
 
 	// Initialize database
 	if err := db.Init(); err != nil {
@@ -58,10 +58,18 @@ func main() {
 	fmt.Println("")
 	fmt.Println("📡 Starting server...")
 	fmt.Println("")
-	localAddr := os.Getenv("LOCAL_HOST_IP") + ":" + os.Getenv("LOCAL_HOST_PORT")
-	if localAddr == ":" {
-		localAddr = "127.0.0.1:8765"
+
+	port := os.Getenv("LOCAL_HOST_PORT")
+	if port == "" {
+		port = "8765"
 	}
+
+	ip := os.Getenv("LOCAL_HOST_IP")
+	if ip == "" {
+		ip = "0.0.0.0"
+	}
+
+	localAddr := ip + ":" + port
 	log.Println("✅ Server listening at http://" + localAddr)
 	if err := http.ListenAndServe(localAddr, nil); err != nil {
 		log.Fatal("❌ Server error:", err)
