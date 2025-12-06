@@ -133,3 +133,5 @@ function handleWebSocketMessage(event) {
         addMessage('received', event.data);
     }
 }
+
+connect()
