@@ -7,10 +7,16 @@
   - Task: Added WebSocket handlers (`HandleVolumeWS`) and integrated into system router.
   - Task: Updated `temp/web/index.html` with volume controls for testing.
 
-- [ ] **Integrate brightnessctl**
+- [x] **Integrate brightnessctl**
 
   - Source: `docs/dump/todo.txt`
   - Task: Investigate and implement brightness control integration.
+  - Implementation:
+    - Created `internal/system/brightness/brightness.go` with core logic.
+    - Created `internal/system/brightness/handle_brightness.go` for WebSocket handling.
+    - Registered handler in `internal/system/system_wesocket_handler.go`.
+    - Updated `temp/web/index.html` with brightness controls.
+    - Documented in `docs/features/brightness-control.md`.
 
 - [ ] **Refactor Spotify Logging**
 
