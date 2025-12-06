@@ -1,37 +1,40 @@
-# Todo List - December 6, 2025
+# Todo List
+
+## 📅 Dec 6, 2025 - Phase 1: Stability
 
 - [x] **Implement Volume Control**
-
-  - File: `internal/system/volume/volume.go`, `internal/system/volume/handle_volume.go`
-  - Task: Implemented `CurrentSystemVolume()`, `SickSystemSetVolume()`, `IncreaseSystemVolume()`, `DecreaseSystemVolume()` with pactl integration.
-  - Task: Added WebSocket handlers (`HandleVolumeWS`) and integrated into system router.
-  - Task: Updated `temp/web/index.html` with volume controls for testing.
-
 - [x] **Integrate brightnessctl**
-
-  - Source: `docs/dump/todo.txt`
-  - Task: Investigate and implement brightness control integration.
-  - Implementation:
-    - Created `internal/system/brightness/brightness.go` with core logic.
-    - Created `internal/system/brightness/handle_brightness.go` for WebSocket handling.
-    - Registered handler in `internal/system/system_wesocket_handler.go`.
-    - Updated `temp/web/index.html` with brightness controls.
-    - Documented in `docs/features/brightness-control.md`.
-
-- [ ] **Refactor Spotify Logging**
-
-  - File: `internal/spotify/spotify.go`
-  - Task: Replace `fmt.Println` with `helpers.LogMessage` for consistent logging.
-
-- [ ] **Update Web Test Client**
-
-  - File: `temp/web/index.html`
-  - Task: Replace hardcoded device ID with dynamic input or token handling.
-
-- [ ] **Verify Spotify Auth Flow**
-
-  - Task: Verify the redirection logic when tokens are missing (currently just logs a warning).
-
 - [x] **Add TODO comment to websocket handler**
-  - File: `internal/websocket/handler.go`
-  - Task: Add TODO note for future unified switch-case refactoring (legacy support).
+- [x] **Fix go.mod Version**
+  - Issue: `go 1.25.3` is invalid.
+  - Fix: Downgrade to `1.23.0` or `1.22`.
+- [ ] **Unified Logger**
+  - Issue: Inconsistent logging (`fmt.Println` vs `log.Println`).
+  - Fix: Adopt `slog` or `zerolog` (Go 1.21+). Replace `fmt.Println`.
+- [ ] **Config Struct**
+  - Issue: Redundant `godotenv.Load()`.
+  - Fix: Create `internal/config/config.go` to load ENV once.
+- [x] **Fix Network Listener**
+  - Issue: Hardcoded `127.0.0.1`.
+  - Fix: Change default bind address to `0.0.0.0:8765`.
+
+## 📅 Dec 7, 2025 - Phase 2: Systems Engineering
+
+- [ ] **Graceful Shutdown**
+  - Fix: Implement `signal.Notify`, `context.WithCancel`, and `server.Shutdown()`.
+- [ ] **Streaming File Uploads**
+  - Issue: `ParseMultipartForm` uses too much RAM.
+  - Fix: Rewrite `HandleTempFileShareAccept` to use `io.Copy`.
+- [ ] **Context Propagation**
+  - Fix: Pass `ctx` to poller.
+
+## 🔮 Future / Upcoming - Phase 3: Professionalism
+
+- [ ] **Unit Tests**
+  - Fix: Write `_test.go` for Auth logic.
+- [ ] **Makefile**
+  - Fix: Add Makefile for build/run/test.
+- [ ] **Linter**
+  - Fix: Run `golangci-lint` and fix warnings.
+- [ ] **Update Web Test Client** (Dynamic deviceId/token)
+- [ ] **Verify Spotify Auth Flow**

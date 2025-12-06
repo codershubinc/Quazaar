@@ -3,10 +3,10 @@ const errorMessage = document.getElementById('errorMessage');
 
 loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    
+
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
-    
+
     try {
         const response = await fetch('/api/v0.1/login', {
             method: 'POST',
@@ -15,14 +15,14 @@ loginForm.addEventListener('submit', async (e) => {
             },
             body: JSON.stringify({ username, password })
         });
-        
+
         const data = await response.json();
-        
+
         if (response.ok) {
             // Save token
             localStorage.setItem('authToken', data.token);
             localStorage.setItem('username', data.username);
-            
+
             // Redirect to main page
             window.location.href = '/';
         } else {
