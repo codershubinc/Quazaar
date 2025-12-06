@@ -77,6 +77,15 @@ func HandleVolumeWS(msg any) (models.ServerResponse, error) {
 			Action:        "get",
 			Success:       true,
 		}}, nil
+	case "mute":
+		success, _, err := ToggleMute()
+		if err != nil {
+			return models.ServerResponse{Status: "error", Data: VolumeResponse{Error: err.Error()}}, err
+		}
+		return models.ServerResponse{Status: "success", Message: "system", Data: VolumeResponse{
+			Action:  "mute",
+			Success: success,
+		}}, nil
 
 	default:
 		return models.ServerResponse{Status: "error"}, fmt.Errorf("no action found or invalid action")

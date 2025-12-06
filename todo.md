@@ -2,8 +2,10 @@
 
 - [x] **Implement Volume Control**
 
-  - File: `internal/system/volume/volume.go`
+  - File: `internal/system/volume/volume.go`, `internal/system/volume/handle_volume.go`
   - Task: Implemented `CurrentSystemVolume()`, `SickSystemSetVolume()`, `IncreaseSystemVolume()`, `DecreaseSystemVolume()` with pactl integration.
+  - Task: Added WebSocket handlers (`HandleVolumeWS`) and integrated into system router.
+  - Task: Updated `temp/web/index.html` with volume controls for testing.
 
 - [ ] **Integrate brightnessctl**
 

@@ -67,7 +67,7 @@ func SickSystemSetVolume(action string, volTo int) (success bool, currentVolume 
 			sysVol = 100
 		}
 		act = fmt.Sprintf("%d%%", sysVol)
-	case "sick":
+	case "set":
 		sysVol = volTo
 		if sysVol > 100 {
 			sysVol = 100
@@ -104,4 +104,20 @@ func DecreaseSystemVolume() (success bool, currentVolume int, err error) {
 		return false, -1, err
 	}
 	return success, cVol, nil
+}
+
+func ToggleMute() (success bool, isMuted bool, err error) {
+	_, err = helpers.SpawnProcess("pactl", []string{"set-sink-mute", "@DEFAULT_SINK@", "toggle"})
+	if err != nil {
+		return false, false, err
+	}
+
+	// Check new mute status
+	out, err := helpers.SpawnProcess("pactl", []string{"get-sink-mute", "@DEFAULT_SINK@"})
+	if err != nil {
+		return true, false, nil // Toggle worked but couldn't read status
+	}
+
+	isMuted = strings.Contains(string(out), "yes")
+	return true, isMuted, nil
 }
