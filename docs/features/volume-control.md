@@ -18,9 +18,11 @@ All volume commands should be sent with the following base structure:
 ### Actions
 
 #### 1. Get Volume
+
 Retrieves the current system volume.
 
 **Request:**
+
 ```json
 {
   "type": "system",
@@ -30,6 +32,7 @@ Retrieves the current system volume.
 ```
 
 **Response:**
+
 ```json
 {
   "status": "success",
@@ -43,9 +46,11 @@ Retrieves the current system volume.
 ```
 
 #### 2. Increase Volume
+
 Increases the system volume by 5%.
 
 **Request:**
+
 ```json
 {
   "type": "system",
@@ -55,6 +60,7 @@ Increases the system volume by 5%.
 ```
 
 **Response:**
+
 ```json
 {
   "status": "success",
@@ -68,9 +74,11 @@ Increases the system volume by 5%.
 ```
 
 #### 3. Decrease Volume
+
 Decreases the system volume by 5%.
 
 **Request:**
+
 ```json
 {
   "type": "system",
@@ -80,6 +88,7 @@ Decreases the system volume by 5%.
 ```
 
 **Response:**
+
 ```json
 {
   "status": "success",
@@ -93,9 +102,11 @@ Decreases the system volume by 5%.
 ```
 
 #### 4. Set Volume
+
 Sets the system volume to a specific percentage (0-100).
 
 **Request:**
+
 ```json
 {
   "type": "system",
@@ -106,6 +117,7 @@ Sets the system volume to a specific percentage (0-100).
 ```
 
 **Response:**
+
 ```json
 {
   "status": "success",
@@ -119,9 +131,11 @@ Sets the system volume to a specific percentage (0-100).
 ```
 
 #### 5. Toggle Mute
+
 Toggles the system mute state.
 
 **Request:**
+
 ```json
 {
   "type": "system",
@@ -131,6 +145,7 @@ Toggles the system mute state.
 ```
 
 **Response:**
+
 ```json
 {
   "status": "success",
