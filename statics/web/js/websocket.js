@@ -3,9 +3,15 @@ import { addMessage, updateStatus, updateStats, updateMediaInfo } from './ui.js'
 import * as el from './elements.js';
 
 export function connect() {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+        window.location.href = '/web/login.html';
+        return;
+    }
+
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const host = window.location.host; // Use current host (e.g., localhost:8765)
-    const url = `${protocol}//${host}/ws?deviceId=$2a$10$jWT5DfCYez7vSyrR2NiBg.REJDNvP5dxy8Pr0uyuJXqGgg3XHpqv2`;
+    const url = `${protocol}//${host}/ws?deviceId=${encodeURIComponent(token)}`;
     addMessage('info', `Connecting to ${url}...`);
 
     state.ws = new WebSocket(url);
