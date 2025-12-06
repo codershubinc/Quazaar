@@ -3,6 +3,7 @@ package websocket
 import (
 	"Quazaar/internal/player"
 	spotifyArtist "Quazaar/internal/spotify/artist"
+	"Quazaar/internal/system"
 	"Quazaar/pkg/models"
 	"fmt"
 	"log"
@@ -63,7 +64,22 @@ func Handle(res http.ResponseWriter, req *http.Request) {
 		}
 
 		log.Printf("📨 Received from %s: %+v", client.ID, msg)
+		// type of accept msg should
+		// type = [any of system , spotify etc add more category as needed]
+		//
+		typeOfMsg := msg["type"]
+		switch typeOfMsg {
+		case "system":
+			res, err := system.HandleWebSocket(msg)
+			if err != nil {
+				continue
+			}
+			if err := conn.WriteJSON(res); err != nil {
+				log.Printf("Error sending system response to client %s: %v", client.ID, err)
+			}
+			continue
 
+		}
 		// Handle Spotify artist messages
 		if msgType, ok := msg["message"].(string); ok && msgType == "spotify_artist" {
 			log.Printf("🎵 Processing Spotify artist message")
