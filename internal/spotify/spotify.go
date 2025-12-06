@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/joho/godotenv"
 )
@@ -20,7 +21,7 @@ func Init() {
 	spotifyConfig.SpotifyAPIBaseURL = os.Getenv("SPOTIFY_API_BASE_URL")
 
 	fmt.Println("Checking for spotify tokens .../.../.../...")
-	_, err := spotifyTokens.GetSpotifyRefreshToken()
+	rt, err := spotifyTokens.GetSpotifyRefreshToken()
 	if err != nil {
 		fmt.Println("❌ Spotify tokens not found. Please authenticate with Spotify.")
 		fmt.Println("Refresh token not found in DB redirecting to auth spotify ../.../../..")
@@ -29,7 +30,7 @@ func Init() {
 			"Spotify refresh token not found in DB, redirecting to auth spotify",
 		)
 	}
-	fmt.Println("✅ Spotify tokens found.")
+	fmt.Println("✅ Spotify tokens found.", strings.Split(rt, "")[0]+"...")
 	helpers.LogMessage(
 		helpers.INFO,
 		"Spotify refresh token found in DB",

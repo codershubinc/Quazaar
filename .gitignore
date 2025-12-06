@@ -1,3 +1,5 @@
 temp/
 .env
-quazaar
+/assets/gm
+# Added by goreleaser init:
+dist/
