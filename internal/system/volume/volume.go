@@ -38,72 +38,42 @@ func CurrentSystemVolume() (int, error) {
 	return vol, nil
 }
 
-func SickSystemSetVolume(action string, volTo int) (success bool, currentVolume int, err error) {
-	var act string
-	sysVol, err := CurrentSystemVolume()
-	if err != nil {
-		return false, -1, err
+// SetVolume sets the volume to a specific percentage (0-100)
+func SetVolume(percent int) (bool, int, error) {
+	if percent < 0 {
+		percent = 0
 	}
-	if sysVol >= 100 && action == "inc" {
-		return false, -1, fmt.Errorf("volume out of bound , cant increase above 100")
-	}
-	if sysVol <= 0 && action == "dec" {
-		return false, -1, fmt.Errorf("volume out of bound , cant decrease of the below 0")
-	}
-	if action == "" {
-		return false, -1, fmt.Errorf("need the action for doing work, f*ck u")
+	if percent > 100 {
+		percent = 100
 	}
 
-	switch action {
-	case "dec":
-		sysVol -= volTo
-		if sysVol < 0 {
-			sysVol = 0
-		}
-		act = fmt.Sprintf("%d%%", sysVol)
-	case "inc":
-		sysVol += volTo
-		if sysVol > 100 {
-			sysVol = 100
-		}
-		act = fmt.Sprintf("%d%%", sysVol)
-	case "set":
-		sysVol = volTo
-		if sysVol > 100 {
-			sysVol = 100
-		} else if sysVol < 0 {
-			sysVol = 0
-		}
-		act = fmt.Sprintf("%d%%", sysVol)
-	default:
-		return false, -1, fmt.Errorf("are u doing mEth 🎋 ; what action  you send just see")
-	}
-
-	_, err = helpers.SpawnProcess("pactl", []string{
+	_, err := helpers.SpawnProcess("pactl", []string{
 		"set-sink-volume",
 		"@DEFAULT_SINK@",
-		act,
+		fmt.Sprintf("%d%%", percent),
 	})
 	if err != nil {
 		return false, -1, err
 	}
-
-	return true, sysVol, nil
+	return true, percent, nil
 }
 
-func IncreaseSystemVolume() (success bool, currentVolume int, err error) {
-	success, cVol, err := SickSystemSetVolume("inc", 5)
+// IncreaseSystemVolume increases volume by 5% (capped at 100%)
+func IncreaseSystemVolume() (bool, int, error) {
+	curr, err := CurrentSystemVolume()
 	if err != nil {
 		return false, -1, err
 	}
-	return success, cVol, nil
+	return SetVolume(curr + 5)
 }
-func DecreaseSystemVolume() (success bool, currentVolume int, err error) {
-	success, cVol, err := SickSystemSetVolume("dec", 5)
+
+// DecreaseSystemVolume decreases volume by 5% (floored at 0%)
+func DecreaseSystemVolume() (bool, int, error) {
+	curr, err := CurrentSystemVolume()
 	if err != nil {
 		return false, -1, err
 	}
-	return success, cVol, nil
+	return SetVolume(curr - 5)
 }
 
 func ToggleMute() (success bool, isMuted bool, err error) {
@@ -115,7 +85,7 @@ func ToggleMute() (success bool, isMuted bool, err error) {
 	// Check new mute status
 	out, err := helpers.SpawnProcess("pactl", []string{"get-sink-mute", "@DEFAULT_SINK@"})
 	if err != nil {
-		return true, false, nil // Toggle worked but couldn't read status
+		return true, false, nil
 	}
 
 	isMuted = strings.Contains(string(out), "yes")

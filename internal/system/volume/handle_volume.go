@@ -57,7 +57,7 @@ func HandleVolumeWS(msg any) (models.ServerResponse, error) {
 			return models.ServerResponse{Status: "error"}, fmt.Errorf("invalid set_to_val")
 		}
 		sickVolInt := int(sickVol)
-		success, cVol, err := SickSystemSetVolume("set", sickVolInt)
+		success, cVol, err := SetVolume(sickVolInt)
 		if err != nil {
 			return models.ServerResponse{Status: "error", Data: VolumeResponse{Error: err.Error()}}, err
 		}
