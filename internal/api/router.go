@@ -24,6 +24,9 @@ func SetupRoutes() {
 	// Static assets
 	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets/"))))
 
+	// Web static files
+	http.Handle("/web/", http.StripPrefix("/web/", http.FileServer(http.Dir("statics/web/"))))
+
 	// API v0.1 - Authentication
 	http.HandleFunc("/api/v0.1/signup", auth.HandleSignup)
 	http.HandleFunc("/api/v0.1/login", auth.HandleLogin)
@@ -71,7 +74,7 @@ func serveHome(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	http.ServeFile(w, r, "temp/web/index.html")
+	http.ServeFile(w, r, "statics/web/index.html")
 }
 
 func serveFileShareTestPage(w http.ResponseWriter, r *http.Request) {
