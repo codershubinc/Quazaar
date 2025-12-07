@@ -114,24 +114,28 @@ data class SystemCommand(
 ### Volume Commands
 
 **Increase Volume:**
+
 ```kotlin
 val cmd = SystemCommand(msg_of = "volume", action = "inc")
 webSocket.send(gson.toJson(cmd))
 ```
 
 **Decrease Volume:**
+
 ```kotlin
 val cmd = SystemCommand(msg_of = "volume", action = "dec")
 webSocket.send(gson.toJson(cmd))
 ```
 
 **Set Volume (0-100):**
+
 ```kotlin
 val cmd = SystemCommand(msg_of = "volume", action = "set", set_to_vol = 50)
 webSocket.send(gson.toJson(cmd))
 ```
 
 **Mute Toggle:**
+
 ```kotlin
 val cmd = SystemCommand(msg_of = "volume", action = "mute")
 webSocket.send(gson.toJson(cmd))
@@ -140,18 +144,21 @@ webSocket.send(gson.toJson(cmd))
 ### Brightness Commands
 
 **Increase Brightness:**
+
 ```kotlin
 val cmd = SystemCommand(msg_of = "brightness", action = "inc")
 webSocket.send(gson.toJson(cmd))
 ```
 
 **Decrease Brightness:**
+
 ```kotlin
 val cmd = SystemCommand(msg_of = "brightness", action = "dec")
 webSocket.send(gson.toJson(cmd))
 ```
 
 **Set Brightness (0-100):**
+
 ```kotlin
 val cmd = SystemCommand(msg_of = "brightness", action = "set", set_to = 75)
 webSocket.send(gson.toJson(cmd))
@@ -172,21 +179,25 @@ data class MediaCommand(
 ### Usage
 
 **Play:**
+
 ```kotlin
 webSocket.send(gson.toJson(MediaCommand("play")))
 ```
 
 **Pause:**
+
 ```kotlin
 webSocket.send(gson.toJson(MediaCommand("pause")))
 ```
 
 **Next Track:**
+
 ```kotlin
 webSocket.send(gson.toJson(MediaCommand("next")))
 ```
 
 **Previous Track:**
+
 ```kotlin
 webSocket.send(gson.toJson(MediaCommand("previous")))
 ```
