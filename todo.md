@@ -8,12 +8,6 @@
 - [x] **Fix go.mod Version**
   - Issue: `go 1.25.3` is invalid.
   - Fix: Downgrade to `1.23.0` or `1.22`.
-- [ ] **Unified Logger**
-  - Issue: Inconsistent logging (`fmt.Println` vs `log.Println`).
-  - Fix: Adopt `slog` or `zerolog` (Go 1.21+). Replace `fmt.Println`.
-- [ ] **Config Struct**
-  - Issue: Redundant `godotenv.Load()`.
-  - Fix: Create `internal/config/config.go` to load ENV once.
 - [x] **Fix Network Listener**
   - Issue: Hardcoded `127.0.0.1`.
   - Fix: Change default bind address to `0.0.0.0:8765`.
@@ -28,7 +22,38 @@
 - [ ] **Context Propagation**
   - Fix: Pass `ctx` to poller.
 
-## 🔮 Future / Upcoming - Phase 3: Professionalism
+## 📅 Dec 8, 2025
+
+- [ ] **Unified Logger**
+  - Issue: Inconsistent logging (`fmt.Println` vs `log.Println`).
+  - Fix: Adopt `slog` or `zerolog` (Go 1.21+). Replace `fmt.Println`.
+- [ ] **Config Struct**
+  - Issue: Redundant `godotenv.Load()`.
+  - Fix: Create `internal/config/config.go` to load ENV once.
+- [ ] **Build Optimization Flags (-s -w -trimpath)**
+- [ ] **Create optimize-build.sh Script**
+
+## 📅 Dec 9, 2025
+
+- [ ] **Remove Verbose WebSocket Logging**
+- [ ] **Optimize String Concatenation (fmt.Sprintf)**
+
+## 📅 Dec 10, 2025
+
+- [ ] **Replace Dynamic Maps with Typed Structs**
+- [ ] **Optimize Media Info String Allocations**
+
+## 📅 Dec 11, 2025
+
+- [ ] **Implement sync.Pool for JSON Encoders**
+- [ ] **Add Graceful Shutdown to Poller**
+
+## 📅 Dec 12, 2025
+
+- [ ] **Update .goreleaser.yaml with ldflags**
+- [ ] **Test Binary Size Reduction**
+
+## 🔮 Future / Upcoming - Phase 4: Professionalism
 
 - [ ] **Unit Tests**
   - Fix: Write `_test.go` for Auth logic.
