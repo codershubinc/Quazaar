@@ -77,7 +77,7 @@ func BroadcastMessage(msg models.ServerResponse) {
 	defer clientsMu.RUnlock()
 
 	if len(clients) == 0 {
-		log.Println("⚠️  No clients connected, message not sent")
+		// log.Println("⚠️  No clients connected, message not sent")
 		return
 	}
 
