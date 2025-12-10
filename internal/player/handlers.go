@@ -17,7 +17,8 @@ func HandleGetPlayerInfo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	info, err := media.GetPlayerInfoViaDBusWithFallback()
+	// Use LinuxDBusPlayer for Metadata
+	info, err := LinuxDBusPlayer.GetCurrentPlayerMetadata()
 	if err != nil {
 		log.Printf("❌ Failed to get player info: %v", err)
 		w.Header().Set("Content-Type", "application/json")
@@ -157,8 +158,9 @@ func HandlePlayPause(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err := helpers.SpawnProcess("playerctl", []string{"play-pause"})
-	if err != nil {
+	// Use LinuxDBusPlayer for Play/Pause
+	success, err := LinuxDBusPlayer.PlayPause()
+	if err != nil || !success {
 		log.Printf("❌ Play/Pause failed: %v", err)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
@@ -185,8 +187,9 @@ func HandleNext(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err := helpers.SpawnProcess("playerctl", []string{"next"})
-	if err != nil {
+	// Use LinuxDBusPlayer for Next
+	success, err := LinuxDBusPlayer.Next()
+	if err != nil || !success {
 		log.Printf("❌ Next track failed: %v", err)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
@@ -213,8 +216,9 @@ func HandlePrevious(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err := helpers.SpawnProcess("playerctl", []string{"previous"})
-	if err != nil {
+	// Use LinuxDBusPlayer for Previous
+	success, err := LinuxDBusPlayer.Prev()
+	if err != nil || !success {
 		log.Printf("❌ Previous track failed: %v", err)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)

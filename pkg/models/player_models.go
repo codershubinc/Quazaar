@@ -23,3 +23,9 @@ type MediaInfo struct {
 	Position string
 	Player   string
 }
+
+type PlayerClientRequest struct {
+	Type   string `json:"type"`
+	MsgOf  string `json:"msg_of"`
+	Action string `json:"action"`
+}

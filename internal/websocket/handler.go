@@ -99,16 +99,61 @@ func Handle(res http.ResponseWriter, req *http.Request) {
 		}
 
 		// Handle player commands
-		if command, ok := msg["command"]; ok {
+		if commandVal, ok := msg["command"]; ok {
+			command, ok := commandVal.(string)
+			if !ok {
+				log.Printf("⚠️  Invalid command format: %v", commandVal)
+				continue
+			}
+
 			log.Printf("🎮 Processing command: %v", command)
-			if err := player.HandlePlayerCommand(msg); err != nil {
+
+			var err error
+			var success bool = true
+
+			switch command {
+			case "player_toggle", "play-pause":
+				success, err = player.LinuxDBusPlayer.PlayPause()
+			case "next":
+				success, err = player.LinuxDBusPlayer.Next()
+			case "prev", "previous":
+				success, err = player.LinuxDBusPlayer.Prev()
+			case "seek_forward":
+				success, err = player.LinuxDBusPlayer.SeekForward()
+			case "seek_backward":
+				success, err = player.LinuxDBusPlayer.SeekBackward()
+			case "play":
+				// Check status first to avoid toggling if already playing
+				info, e := player.LinuxDBusPlayer.GetCurrentPlayerMetadata()
+				if e == nil {
+					if info.Status != "Playing" {
+						success, err = player.LinuxDBusPlayer.PlayPause()
+					}
+				} else {
+					err = e
+				}
+			case "pause":
+				// Check status first to avoid toggling if already paused
+				info, e := player.LinuxDBusPlayer.GetCurrentPlayerMetadata()
+				if e == nil {
+					if info.Status == "Playing" {
+						success, err = player.LinuxDBusPlayer.PlayPause()
+					}
+				} else {
+					err = e
+				}
+			default:
+				err = fmt.Errorf("unknown command: %s", command)
+			}
+
+			if err != nil || !success {
 				log.Printf("⚠️  Command failed: %v", err)
 				// Send error response to client
 				errorMsg := models.ServerResponse{
 					Status:  "error",
 					Message: "command_failed",
 					Data: map[string]string{
-						"error": err.Error(),
+						"error": fmt.Sprintf("%v", err),
 					},
 				}
 				conn.WriteJSON(errorMsg)
@@ -118,7 +163,7 @@ func Handle(res http.ResponseWriter, req *http.Request) {
 					Status:  "success",
 					Message: "command_executed",
 					Data: map[string]string{
-						"command": fmt.Sprintf("%v", command),
+						"command": command,
 					},
 				}
 				log.Printf("✅ Command executed successfully: %v", command)
