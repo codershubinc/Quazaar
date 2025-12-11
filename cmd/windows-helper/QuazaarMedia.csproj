@@ -9,7 +9,10 @@
     <Platforms>x64</Platforms>
     
     <!-- NATIVE AOT OPTIMIZATION -->
-    <PublishAot>true</PublishAot>
+    <!-- <PublishAot>true</PublishAot> -->
+    <PublishTrimmed>true</PublishTrimmed>
+    <TrimMode>partial</TrimMode>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
     <StripSymbols>true</StripSymbols>
     <InvariantGlobalization>true</InvariantGlobalization>
   </PropertyGroup>
