@@ -4,7 +4,6 @@ package player
 
 import (
 	"Quazaar/pkg/models"
-	"fmt"
 )
 
 func playPauseWindows() (bool, error) {
@@ -33,11 +32,11 @@ func setVolumeWindows(volume int) (bool, error) {
 }
 
 func getCurrentPlayerMetadataWindows() (models.MediaInfo, error) {
-	return models.MediaInfo{}, fmt.Errorf("not implemented on windows")
+	return models.MediaInfo{}, nil
 }
 
 func getAllPlayersWindows() ([]string, error) {
-	return nil, fmt.Errorf("not implemented on windows")
+	return nil, nil
 }
 
 var WindowsPlayerHandler = models.PlayerFunctions{
