@@ -5,3 +5,5 @@ temp/
 dist/
 quazaar
 *.temp.md
+/internal/sidecar/temp 
+server.exe

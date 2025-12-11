@@ -3,8 +3,10 @@
 package player
 
 import (
+	"Quazaar/internal/sidecar"
 	"Quazaar/pkg/models"
 	"bufio"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -62,36 +64,29 @@ func (w *windowsBackend) startSidecar() error {
 	w.mu.Lock()
 	defer w.mu.Unlock()
 
-	ex, err := os.Executable()
+	// Extract the embedded sidecar
+	sidecarPath, err := sidecar.ExtractSidecar()
 	if err != nil {
-		return err
-	}
-	exPath := filepath.Dir(ex)
-	// Fix for 'go run' which puts binary in temp folders
-	if strings.Contains(exPath, "go-build") {
-		exPath = "."
-	}
-
-	sidecarPath := filepath.Join(exPath, "QuazaarMedia.exe")
-
-	// Check if file exists to give better error message
-	if _, err := os.Stat(sidecarPath); os.IsNotExist(err) {
-		return fmt.Errorf("QuazaarMedia.exe not found at %s", sidecarPath)
+		w.cmd = nil
+		return fmt.Errorf("failed to extract sidecar: %w", err)
 	}
 
 	w.cmd = exec.Command(sidecarPath)
 
 	w.stdin, err = w.cmd.StdinPipe()
 	if err != nil {
+		w.cmd = nil
 		return err
 	}
 
 	stdout, err := w.cmd.StdoutPipe()
 	if err != nil {
+		w.cmd = nil
 		return err
 	}
 
 	if err := w.cmd.Start(); err != nil {
+		w.cmd = nil
 		return err
 	}
 
@@ -100,8 +95,12 @@ func (w *windowsBackend) startSidecar() error {
 	// Wait for handshake with 2s timeout
 	readyCh := make(chan bool)
 	go func() {
-		if w.reader.Scan() && strings.Contains(w.reader.Text(), "ready") {
-			readyCh <- true
+		if w.reader.Scan() {
+			line := w.reader.Text()
+			log.Printf("Sidecar initial response: %s", line)
+			if strings.Contains(line, "ready") {
+				readyCh <- true
+			}
 		}
 	}()
 
@@ -109,6 +108,8 @@ func (w *windowsBackend) startSidecar() error {
 	case <-readyCh:
 		return nil
 	case <-time.After(2 * time.Second):
+		w.cmd.Process.Kill()
+		w.cmd = nil
 		return fmt.Errorf("handshake timeout")
 	}
 }
@@ -185,11 +186,36 @@ func getCurrentPlayerMetadataWindows() (models.MediaInfo, error) {
 
 	if wb.reader.Scan() {
 		resp := wb.reader.Text()
-		var info models.MediaInfo
-		if err := json.Unmarshal([]byte(resp), &info); err != nil {
+
+		// Define a temporary struct to match the C# JSON output (which uses numbers)
+		type windowsResponse struct {
+			Title      string  `json:"Title"`
+			Artist     string  `json:"Artist"`
+			Album      string  `json:"Album"`
+			Status     string  `json:"Status"`
+			Position   float64 `json:"Position"`
+			Duration   float64 `json:"Duration"`
+			App        string  `json:"App"`
+			ArtworkUri string  `json:"ArtworkUri"`
+		}
+
+		var wInfo windowsResponse
+		if err := json.Unmarshal([]byte(resp), &wInfo); err != nil {
 			return models.MediaInfo{}, err
 		}
-		return info, nil
+
+		// Convert to models.MediaInfo (which expects strings for Position/Length)
+		// We convert ms (from Windows) to us (microseconds) to match playerctl behavior
+		return models.MediaInfo{
+			Title:    wInfo.Title,
+			Artist:   wInfo.Artist,
+			Album:    wInfo.Album,
+			Status:   wInfo.Status,
+			Position: fmt.Sprintf("%.0f", wInfo.Position*1000),
+			Length:   fmt.Sprintf("%.0f", wInfo.Duration*1000),
+			Player:   wInfo.App,
+			Artwork:  tempArtworkUriToBytesHandler(wInfo.ArtworkUri),
+		}, nil
 	}
 	return models.MediaInfo{}, fmt.Errorf("stream closed")
 }
@@ -206,4 +232,36 @@ var WindowsPlayerHandler models.PlayerFunctions
 
 func initializeDefaultPlayer() models.PlayerFunctions {
 	return WindowsPlayerHandler
+}
+
+func tempArtworkUriToBytesHandler(uri string) string {
+	// On Windows, the sidecar provides a full file path for artwork.
+	// We read the file and return its bytes.
+	// fmt.Println("Got uri", uri)
+	if uri == "" {
+		return ""
+	}
+	// The uri is likely a full path like "C:\Users\..."
+	bytes, err := os.ReadFile(uri)
+	if err != nil {
+		return ""
+	}
+
+	// Determine extension
+	ext := strings.ToLower(filepath.Ext(uri))
+	imageExtension := "jpeg" // default
+	switch ext {
+	case ".png":
+		imageExtension = "png"
+	case ".jpg", ".jpeg":
+		imageExtension = "jpeg"
+	case ".gif":
+		imageExtension = "gif"
+	case ".webp":
+		imageExtension = "webp"
+	case ".bmp":
+		imageExtension = "bmp"
+	}
+
+	return "data:image/" + imageExtension + ";base64," + base64.StdEncoding.EncodeToString(bytes)
 }
