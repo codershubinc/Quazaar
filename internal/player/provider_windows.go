@@ -189,19 +189,32 @@ func getCurrentPlayerMetadataWindows() (models.MediaInfo, error) {
 
 		// Define a temporary struct to match the C# JSON output (which uses numbers)
 		type windowsResponse struct {
-			Title      string  `json:"Title"`
-			Artist     string  `json:"Artist"`
-			Album      string  `json:"Album"`
-			Status     string  `json:"Status"`
-			Position   float64 `json:"Position"`
-			Duration   float64 `json:"Duration"`
-			App        string  `json:"App"`
-			ArtworkUri string  `json:"ArtworkUri"`
+			Title         string  `json:"Title"`
+			Artist        string  `json:"Artist"`
+			Album         string  `json:"Album"`
+			Status        string  `json:"Status"`
+			Position      float64 `json:"Position"`
+			Duration      float64 `json:"Duration"`
+			App           string  `json:"App"`
+			ArtworkUri    string  `json:"ArtworkUri"`
+			ArtworkBase64 string  `json:"ArtworkBase64"`
+			Message       string  `json:"message"`
 		}
 
 		var wInfo windowsResponse
 		if err := json.Unmarshal([]byte(resp), &wInfo); err != nil {
 			return models.MediaInfo{}, err
+		}
+
+		if wInfo.Status == "error" {
+			return models.MediaInfo{}, fmt.Errorf("sidecar error: %s", wInfo.Message)
+		}
+
+		artwork := ""
+		if wInfo.ArtworkBase64 != "" {
+			artwork = "data:image/jpeg;base64," + wInfo.ArtworkBase64
+		} else {
+			artwork = tempArtworkUriToBytesHandler(wInfo.ArtworkUri)
 		}
 
 		// Convert to models.MediaInfo (which expects strings for Position/Length)
@@ -214,7 +227,7 @@ func getCurrentPlayerMetadataWindows() (models.MediaInfo, error) {
 			Position: fmt.Sprintf("%.0f", wInfo.Position*1000),
 			Length:   fmt.Sprintf("%.0f", wInfo.Duration*1000),
 			Player:   wInfo.App,
-			Artwork:  tempArtworkUriToBytesHandler(wInfo.ArtworkUri),
+			Artwork:  artwork,
 		}, nil
 	}
 	return models.MediaInfo{}, fmt.Errorf("stream closed")
