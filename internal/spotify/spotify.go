@@ -29,6 +29,7 @@ func Init() {
 			helpers.WARNING,
 			"Spotify refresh token not found in DB, redirecting to auth spotify",
 		)
+		return
 	}
 	fmt.Println("✅ Spotify tokens found.", strings.Split(rt, "")[0]+"...")
 	helpers.LogMessage(
