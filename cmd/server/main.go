@@ -11,6 +11,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"runtime"
 
 	"github.com/joho/godotenv"
 )
@@ -21,6 +22,8 @@ func main() {
 		log.Println("⚠️  .env file not found, using system environment variables")
 	}
 
+	//temp:
+	log.Printf("OS type is %s", runtime.GOOS)
 	// Display startup banner
 	// Options: banner.Variant1(), banner.Variant2(), banner.Variant3(), banner.Variant4()
 	banner.Show()
@@ -59,7 +62,7 @@ func main() {
 	fmt.Println("📡 Starting server...")
 	fmt.Println("")
 
-	port := os.Getenv("LOCAL_HOST_PORT")
+	port := os.Getenv("LOCAL_HOST_PORT_DEV")
 	if port == "" {
 		port = "8765"
 	}

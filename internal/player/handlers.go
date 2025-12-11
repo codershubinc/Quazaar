@@ -17,7 +17,9 @@ func HandleGetPlayerInfo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	info, err := media.GetPlayerInfoViaDBusWithFallback()
+	// Use platform player functions for Metadata
+	pf := GetCurrentPlayerFunctions()
+	info, err := pf.GetCurrentPlayerMetadata()
 	if err != nil {
 		log.Printf("❌ Failed to get player info: %v", err)
 		w.Header().Set("Content-Type", "application/json")
@@ -157,8 +159,10 @@ func HandlePlayPause(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err := helpers.SpawnProcess("playerctl", []string{"play-pause"})
-	if err != nil {
+	// Use platform player functions for Play/Pause
+	pf := GetCurrentPlayerFunctions()
+	success, err := pf.PlayPause()
+	if err != nil || !success {
 		log.Printf("❌ Play/Pause failed: %v", err)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
@@ -185,8 +189,10 @@ func HandleNext(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err := helpers.SpawnProcess("playerctl", []string{"next"})
-	if err != nil {
+	// Use platform player functions for Next
+	pf := GetCurrentPlayerFunctions()
+	success, err := pf.Next()
+	if err != nil || !success {
 		log.Printf("❌ Next track failed: %v", err)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
@@ -213,8 +219,10 @@ func HandlePrevious(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err := helpers.SpawnProcess("playerctl", []string{"previous"})
-	if err != nil {
+	// Use platform player functions for Previous
+	pf := GetCurrentPlayerFunctions()
+	success, err := pf.Prev()
+	if err != nil || !success {
 		log.Printf("❌ Previous track failed: %v", err)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)

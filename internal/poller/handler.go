@@ -1,7 +1,7 @@
 package poller
 
 import (
-	"Quazaar/internal/media"
+	"Quazaar/internal/player"
 	"Quazaar/internal/websocket"
 	"Quazaar/pkg/models"
 	"fmt"
@@ -12,7 +12,7 @@ func Handle() {
 	// fmt.Println("Started poller Handler ....")
 
 	Poller(1*time.Second, make(chan struct{}), func() {
-		msg, err := media.GetPlayerInfo()
+		msg, err := player.GetCurrentPlayerFunctions().GetCurrentPlayerMetadata()
 
 		if err != nil {
 			fmt.Printf("⚠️ Failed to get player info: %v\n", err)

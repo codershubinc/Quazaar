@@ -43,9 +43,10 @@ func SetVolume(percent int) (bool, int, error) {
 	if percent < 0 {
 		percent = 0
 	}
-	if percent > 100 {
-		percent = 100
-	}
+	// if percent > 100 {
+	// 	percent = 100
+	// }
+	//removed cap of 100%
 
 	_, err := helpers.SpawnProcess("pactl", []string{
 		"set-sink-volume",
@@ -58,7 +59,6 @@ func SetVolume(percent int) (bool, int, error) {
 	return true, percent, nil
 }
 
-// IncreaseSystemVolume increases volume by 5% (capped at 100%)
 func IncreaseSystemVolume() (bool, int, error) {
 	curr, err := CurrentSystemVolume()
 	if err != nil {
