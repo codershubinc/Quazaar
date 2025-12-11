@@ -1,3 +1,5 @@
+//go:build linux
+
 package player
 
 import (
@@ -180,4 +182,8 @@ var LinuxDBusPlayer = models.PlayerFunctions{
 	GetAllPlayers: func() ([]string, error) {
 		return []string{"spotify"}, nil
 	},
+}
+
+func initializeDefaultPlayer() models.PlayerFunctions {
+	return LinuxDBusPlayer
 }

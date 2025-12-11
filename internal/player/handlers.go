@@ -17,8 +17,9 @@ func HandleGetPlayerInfo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Use LinuxDBusPlayer for Metadata
-	info, err := LinuxDBusPlayer.GetCurrentPlayerMetadata()
+	// Use platform player functions for Metadata
+	pf := GetCurrentPlayerFunctions()
+	info, err := pf.GetCurrentPlayerMetadata()
 	if err != nil {
 		log.Printf("❌ Failed to get player info: %v", err)
 		w.Header().Set("Content-Type", "application/json")
@@ -158,8 +159,9 @@ func HandlePlayPause(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Use LinuxDBusPlayer for Play/Pause
-	success, err := LinuxDBusPlayer.PlayPause()
+	// Use platform player functions for Play/Pause
+	pf := GetCurrentPlayerFunctions()
+	success, err := pf.PlayPause()
 	if err != nil || !success {
 		log.Printf("❌ Play/Pause failed: %v", err)
 		w.Header().Set("Content-Type", "application/json")
@@ -187,8 +189,9 @@ func HandleNext(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Use LinuxDBusPlayer for Next
-	success, err := LinuxDBusPlayer.Next()
+	// Use platform player functions for Next
+	pf := GetCurrentPlayerFunctions()
+	success, err := pf.Next()
 	if err != nil || !success {
 		log.Printf("❌ Next track failed: %v", err)
 		w.Header().Set("Content-Type", "application/json")
@@ -216,8 +219,9 @@ func HandlePrevious(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Use LinuxDBusPlayer for Previous
-	success, err := LinuxDBusPlayer.Prev()
+	// Use platform player functions for Previous
+	pf := GetCurrentPlayerFunctions()
+	success, err := pf.Prev()
 	if err != nil || !success {
 		log.Printf("❌ Previous track failed: %v", err)
 		w.Header().Set("Content-Type", "application/json")

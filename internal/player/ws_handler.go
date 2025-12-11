@@ -8,6 +8,7 @@ import (
 
 func HandleWebSocket(msg any) (models.UniServerResponse, error) {
 
+	currentPlayerFunc := GetCurrentPlayerFunctions()
 	playerMsg := msg.(map[string]interface{})
 	action, ok := playerMsg["action"].(string)
 	if !ok {
@@ -16,7 +17,7 @@ func HandleWebSocket(msg any) (models.UniServerResponse, error) {
 
 	switch action {
 	case "toggle_play_pause":
-		success, err := LinuxDBusPlayer.PlayPause()
+		success, err := currentPlayerFunc.PlayPause()
 		if err != nil {
 			return models.UniServerResponse{}, err
 		}
@@ -29,7 +30,7 @@ func HandleWebSocket(msg any) (models.UniServerResponse, error) {
 			Success:     strconv.FormatBool(success),
 		}, nil
 	case "next":
-		success, err := LinuxDBusPlayer.Next()
+		success, err := currentPlayerFunc.Next()
 		if err != nil {
 			return models.UniServerResponse{}, err
 		}
@@ -42,7 +43,7 @@ func HandleWebSocket(msg any) (models.UniServerResponse, error) {
 			Success:     strconv.FormatBool(success),
 		}, nil
 	case "prev":
-		success, err := LinuxDBusPlayer.Prev()
+		success, err := currentPlayerFunc.Prev()
 		if err != nil {
 			return models.UniServerResponse{}, err
 		}
@@ -55,7 +56,7 @@ func HandleWebSocket(msg any) (models.UniServerResponse, error) {
 			Success:     strconv.FormatBool(success),
 		}, nil
 	case "seek_prev":
-		success, err := LinuxDBusPlayer.SeekBackward()
+		success, err := currentPlayerFunc.SeekBackward()
 		if err != nil {
 			return models.UniServerResponse{}, err
 		}
@@ -68,7 +69,7 @@ func HandleWebSocket(msg any) (models.UniServerResponse, error) {
 			Success:     strconv.FormatBool(success),
 		}, nil
 	case "seek_for":
-		success, err := LinuxDBusPlayer.SeekBackward()
+		success, err := currentPlayerFunc.SeekBackward()
 		if err != nil {
 			return models.UniServerResponse{}, err
 		}

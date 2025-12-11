@@ -108,36 +108,37 @@ func Handle(res http.ResponseWriter, req *http.Request) {
 
 			log.Printf("🎮 Processing command: %v", command)
 
+			pf := player.GetCurrentPlayerFunctions()
 			var err error
 			var success bool = true
 
 			switch command {
 			case "player_toggle", "play-pause":
-				success, err = player.LinuxDBusPlayer.PlayPause()
+				success, err = pf.PlayPause()
 			case "next":
-				success, err = player.LinuxDBusPlayer.Next()
+				success, err = pf.Next()
 			case "prev", "previous":
-				success, err = player.LinuxDBusPlayer.Prev()
+				success, err = pf.Prev()
 			case "seek_forward":
-				success, err = player.LinuxDBusPlayer.SeekForward()
+				success, err = pf.SeekForward()
 			case "seek_backward":
-				success, err = player.LinuxDBusPlayer.SeekBackward()
+				success, err = pf.SeekBackward()
 			case "play":
 				// Check status first to avoid toggling if already playing
-				info, e := player.LinuxDBusPlayer.GetCurrentPlayerMetadata()
+				info, e := pf.GetCurrentPlayerMetadata()
 				if e == nil {
 					if info.Status != "Playing" {
-						success, err = player.LinuxDBusPlayer.PlayPause()
+						success, err = pf.PlayPause()
 					}
 				} else {
 					err = e
 				}
 			case "pause":
 				// Check status first to avoid toggling if already paused
-				info, e := player.LinuxDBusPlayer.GetCurrentPlayerMetadata()
+				info, e := pf.GetCurrentPlayerMetadata()
 				if e == nil {
 					if info.Status == "Playing" {
-						success, err = player.LinuxDBusPlayer.PlayPause()
+						success, err = pf.PlayPause()
 					}
 				} else {
 					err = e
