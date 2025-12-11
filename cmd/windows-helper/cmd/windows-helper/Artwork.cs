@@ -5,9 +5,8 @@ namespace QuazaarMedia
 {
     internal class Artwork
     {
-        public static async Task<string> SaveArtworkAsync(GlobalSystemMediaTransportControlsSession currentSession)
+        public static async Task<string> SaveArtworkAsync(GlobalSystemMediaTransportControlsSessionMediaProperties mediaProperties)
         {
-            var mediaProperties = await currentSession.TryGetMediaPropertiesAsync();
             if (mediaProperties == null) return "noArtwork";
 
             var generateFileName = $"{mediaProperties.Title}.jpg";
@@ -22,8 +21,6 @@ namespace QuazaarMedia
 
             if (File.Exists(artWorkPath))
             {
-                // Console.WriteLine("alredy stored  ::skiping storing ....");
-                // Console.WriteLine($"{{\"artwork_path\": \"{Utils.Escape(artWorkPath)}\"}}");
                 return artWorkPath;
             }
 
@@ -34,7 +31,6 @@ namespace QuazaarMedia
                 using var fileStream = new FileStream(artWorkPath, FileMode.Create);
                 await thumbnailStream.AsStreamForRead().CopyToAsync(fileStream);
 
-                // Console.WriteLine($"{{\"artwork_path\": \"{Utils.Escape(artWorkPath)}\"}}");
                 return artWorkPath;
             }
 

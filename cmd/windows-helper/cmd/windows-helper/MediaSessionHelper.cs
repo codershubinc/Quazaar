@@ -37,7 +37,7 @@ namespace QuazaarMedia
                     positionMs = currentPos.TotalMilliseconds;
                 }
 
-                var artworkPath = await Artwork.SaveArtworkAsync(session);
+                var artworkPath = await Artwork.SaveArtworkAsync(props);
 
                 var sb = new StringBuilder();
                 sb.Append("{");
