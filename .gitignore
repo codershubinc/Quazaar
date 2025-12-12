@@ -8,3 +8,5 @@ quazaar
 /internal/sidecar/temp 
 server.exe
 sidecar.log
+release/windows/*.exe
+*.exe
