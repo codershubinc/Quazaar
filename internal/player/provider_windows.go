@@ -5,30 +5,17 @@ package player
 import (
 	"Quazaar/internal/sidecar"
 	"Quazaar/pkg/models"
-	"bufio"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"io"
 	"log"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
-	"sync"
-	"time"
 )
 
-// windowsBackend manages the persistent connection to QuazaarMedia.exe
-type windowsBackend struct {
-	cmd    *exec.Cmd
-	stdin  io.WriteCloser
-	reader *bufio.Scanner
-	mu     sync.Mutex
-}
-
-// Global instance
-var wb = &windowsBackend{}
+// Global instance from sidecar package
+var ws = sidecar.WS
 
 func init() {
 	// 1. Initialize the handler with our functions (even if sidecar isn't ready yet)
@@ -50,7 +37,7 @@ func init() {
 
 	// 3. Start Sidecar in background
 	go func() {
-		if err := wb.startSidecar(); err != nil {
+		if err := sidecar.WS.StartSidecar(); err != nil {
 			log.Printf("❌ Windows Sidecar failed: %v", err)
 		} else {
 			log.Println("✅ Windows Sidecar Connected")
@@ -58,134 +45,47 @@ func init() {
 	}()
 }
 
-// --- Connection Management ---
-
-func (w *windowsBackend) startSidecar() error {
-	w.mu.Lock()
-	defer w.mu.Unlock()
-
-	// Extract the embedded sidecar
-	sidecarPath, err := sidecar.ExtractSidecar()
-	if err != nil {
-		w.cmd = nil
-		return fmt.Errorf("failed to extract sidecar: %w", err)
-	}
-
-	w.cmd = exec.Command(sidecarPath)
-
-	w.stdin, err = w.cmd.StdinPipe()
-	if err != nil {
-		w.cmd = nil
-		return err
-	}
-
-	stdout, err := w.cmd.StdoutPipe()
-	if err != nil {
-		w.cmd = nil
-		return err
-	}
-
-	if err := w.cmd.Start(); err != nil {
-		w.cmd = nil
-		return err
-	}
-
-	w.reader = bufio.NewScanner(stdout)
-
-	// Wait for handshake with 2s timeout
-	readyCh := make(chan bool)
-	go func() {
-		if w.reader.Scan() {
-			line := w.reader.Text()
-			log.Printf("Sidecar initial response: %s", line)
-			if strings.Contains(line, "ready") {
-				readyCh <- true
-			}
-		}
-	}()
-
-	select {
-	case <-readyCh:
-		return nil
-	case <-time.After(2 * time.Second):
-		w.cmd.Process.Kill()
-		w.cmd = nil
-		return fmt.Errorf("handshake timeout")
-	}
-}
-
-// Helper to send command and wait for "status":"ok"
-func (w *windowsBackend) send(action string, args map[string]interface{}) (bool, error) {
-	w.mu.Lock()
-	defer w.mu.Unlock()
-
-	if w.cmd == nil {
-		return false, fmt.Errorf("sidecar offline")
-	}
-
-	payload := map[string]interface{}{"Action": action}
-	for k, v := range args {
-		payload[k] = v
-	}
-
-	jsonBytes, _ := json.Marshal(payload)
-	// Write with newline
-	w.stdin.Write(append(jsonBytes, '\n'))
-
-	if w.reader.Scan() {
-		resp := w.reader.Text()
-		// Loose check handles "status": "ok" or "status":"ok"
-		if strings.Contains(resp, "ok") {
-			return true, nil
-		}
-		return false, fmt.Errorf("sidecar error: %s", resp)
-	}
-	return false, fmt.Errorf("stream closed")
-}
-
-// --- Implementation Functions ---
-
 func playPauseWindows() (bool, error) {
-	return wb.send("play_pause", nil)
+	return ws.Send("play_pause", nil)
 }
 
 func nextWindows() (bool, error) {
-	return wb.send("next", nil)
+	return ws.Send("next", nil)
 }
 
 func prevWindows() (bool, error) {
-	return wb.send("prev", nil)
+
+	return ws.Send("prev", nil)
 }
 
 func seekBackwardWindows() (bool, error) {
-	// C# sidecar needs to handle "seek_backward" or logic implies -10s
-	return wb.send("seek_backward", nil)
+	return ws.Send("seek_backward", nil)
 }
 
 func seekForwardWindows() (bool, error) {
-	return wb.send("seek_forward", nil)
+	return ws.Send("seek_forward", nil)
 }
 
 func seekToWindows(position int64) (bool, error) {
-	return wb.send("seek", map[string]interface{}{"Position": position})
+	return ws.Send("seek", map[string]interface{}{"Position": position})
 }
 
 func setVolumeWindows(volume int) (bool, error) {
-	return wb.send("volume", map[string]interface{}{"Level": volume})
+	return ws.Send("volume", map[string]interface{}{"Level": volume})
 }
 
 func getCurrentPlayerMetadataWindows() (models.MediaInfo, error) {
-	wb.mu.Lock()
-	defer wb.mu.Unlock()
+	ws.Mu.Lock()
+	defer ws.Mu.Unlock()
 
-	if wb.cmd == nil {
+	if ws.Cmd == nil {
 		return models.MediaInfo{}, fmt.Errorf("offline")
 	}
 
-	wb.stdin.Write([]byte(`{"Action": "info"}` + "\n"))
+	ws.Stdin.Write([]byte(`{"Action": "info"}` + "\n"))
 
-	if wb.reader.Scan() {
-		resp := wb.reader.Text()
+	if ws.Reader.Scan() {
+		resp := ws.Reader.Text()
 
 		// Define a temporary struct to match the C# JSON output (which uses numbers)
 		type windowsResponse struct {
@@ -207,7 +107,7 @@ func getCurrentPlayerMetadataWindows() (models.MediaInfo, error) {
 		}
 
 		if wInfo.Status == "error" {
-			return models.MediaInfo{}, fmt.Errorf("sidecar error: %s", wInfo.Message)
+			return models.MediaInfo{}, fmt.Errorf("sidecar error: %s  	 ", wInfo.Message, wInfo)
 		}
 
 		artwork := ""
@@ -257,7 +157,9 @@ func tempArtworkUriToBytesHandler(uri string) string {
 	// The uri is likely a full path like "C:\Users\..."
 	bytes, err := os.ReadFile(uri)
 	if err != nil {
-		return ""
+		fallbackImage, _ := os.ReadFile(filepath.Join("assets", "img", "artwork-fallback.jpg"))
+
+		return "data:image/" + "jpg" + ";base64," + base64.StdEncoding.EncodeToString(fallbackImage)
 	}
 
 	// Determine extension
