@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using Windows.Media.Control;
 using QuazaarMedia.Utilities;
 
@@ -7,6 +8,10 @@ namespace QuazaarMedia.Services
 {
     public class MediaStatusService
     {
+        // HRESULT codes
+        private const int RPC_E_SERVERCALL_RETRYLATER = unchecked((int)0x8001010E);
+        private const int RPC_E_SERVER_DIED = unchecked((int)0x80010007);
+
         public async Task GetAndPrintStatus(GlobalSystemMediaTransportControlsSession session)
         {
             if (session == null)
@@ -22,10 +27,10 @@ namespace QuazaarMedia.Services
                 GlobalSystemMediaTransportControlsSessionTimelineProperties timeline = null;
                 GlobalSystemMediaTransportControlsSessionPlaybackInfo playbackInfo = null;
 
-                // Try to get props with timeout
+                // Try to get props with retry logic
                 try
                 {
-                    props = await session.TryGetMediaPropertiesAsync();
+                    props = await RetryWithBackoff(async () => await session.TryGetMediaPropertiesAsync(), "TryGetMediaPropertiesAsync");
                 }
                 catch (Exception ex)
                 {
@@ -35,7 +40,7 @@ namespace QuazaarMedia.Services
                 // Try to get timeline
                 try
                 {
-                    timeline = session.GetTimelineProperties();
+                    timeline = await RetryWithBackoff(async () => await Task.FromResult(session.GetTimelineProperties()), "GetTimelineProperties");
                 }
                 catch (Exception ex)
                 {
@@ -45,7 +50,7 @@ namespace QuazaarMedia.Services
                 // Try to get playback info
                 try
                 {
-                    playbackInfo = session.GetPlaybackInfo();
+                    playbackInfo = await RetryWithBackoff(async () => await Task.FromResult(session.GetPlaybackInfo()), "GetPlaybackInfo");
                 }
                 catch (Exception ex)
                 {
@@ -54,7 +59,7 @@ namespace QuazaarMedia.Services
 
                 if (props == null || playbackInfo == null)
                 {
-                    LogError("Media properties or playback info is null");
+                    LogError("Media properties or playback info is null after retries");
                     Console.WriteLine("{\"status\": \"idle\"}");
                     return;
                 }
@@ -72,6 +77,37 @@ namespace QuazaarMedia.Services
                 Console.WriteLine($"{{\"status\": \"error\", \"message\": \"{JsonHelper.Escape(msg)}\"}}");
             }
         }
+
+        // Retry with exponential backoff for transient COM errors
+        private async Task<T> RetryWithBackoff<T>(Func<Task<T>> operation, string operationName) where T : class
+        {
+            int maxRetries = 3;
+            int delayMs = 50;
+
+            for (int i = 0; i < maxRetries; i++)
+            {
+                try
+                {
+                    return await operation();
+                }
+                catch (COMException comEx) when (comEx.HResult == RPC_E_SERVERCALL_RETRYLATER || comEx.HResult == RPC_E_SERVER_DIED)
+                {
+                    if (i < maxRetries - 1)
+                    {
+                        LogError($"{operationName}: RPC retry {i + 1}/{maxRetries}, waiting {delayMs}ms...");
+                        await Task.Delay(delayMs);
+                        delayMs *= 2; // Exponential backoff
+                    }
+                    else
+                    {
+                        throw; // Rethrow on last attempt
+                    }
+                }
+            }
+
+            return null; // Should not reach here
+        }
+
         private double CalculateCurrentPosition(
             GlobalSystemMediaTransportControlsSessionTimelineProperties timeline,
             GlobalSystemMediaTransportControlsSessionPlaybackInfo playbackInfo)
@@ -119,8 +155,7 @@ namespace QuazaarMedia.Services
         {
             var details = ex.GetType().Name;
 
-            // For COMException, include HResult
-            if (ex is System.Runtime.InteropServices.COMException comEx)
+            if (ex is COMException comEx)
             {
                 details += $" [HRESULT: 0x{comEx.HResult:X8}]";
             }
