@@ -86,5 +86,5 @@ func serveFileShareTestPage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	http.ServeFile(w, r, "temp/fileshare_test.html")
+	http.ServeFile(w, r, "statics/web/fileshare_test.html")
 }
