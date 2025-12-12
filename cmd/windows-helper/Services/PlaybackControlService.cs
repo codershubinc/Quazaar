@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using Windows.Media.Control;
 using QuazaarMedia.Utilities;
@@ -11,6 +12,7 @@ namespace QuazaarMedia.Services
         {
             if (session == null)
             {
+                LogError("No active media session");
                 Console.WriteLine("{\"status\": \"error\", \"message\": \"no active session\"}");
                 return;
             }
@@ -50,30 +52,81 @@ namespace QuazaarMedia.Services
             }
             catch (Exception ex)
             {
+                var details = FormatExceptionDetails(ex);
+                LogError($"Playback command error ({action}): {details}");
                 Console.WriteLine($"{{\"status\": \"error\", \"message\": \"{JsonHelper.Escape(ex.Message)}\"}}");
             }
         }
 
         private async Task SeekForward(GlobalSystemMediaTransportControlsSession session)
         {
-            var timeline = session.GetTimelineProperties();
-            if (timeline != null)
+            try
             {
-                var newPos = timeline.Position.Add(TimeSpan.FromSeconds(10));
-                if (newPos > timeline.EndTime) newPos = timeline.EndTime;
-                await session.TryChangePlaybackPositionAsync(newPos.Ticks);
+                var timeline = session.GetTimelineProperties();
+                if (timeline != null)
+                {
+                    var newPos = timeline.Position.Add(TimeSpan.FromSeconds(10));
+                    if (newPos > timeline.EndTime) newPos = timeline.EndTime;
+                    await session.TryChangePlaybackPositionAsync(newPos.Ticks);
+                }
+            }
+            catch (Exception ex)
+            {
+                var details = FormatExceptionDetails(ex);
+                LogError($"SeekForward error: {details}");
             }
         }
 
         private async Task SeekBackward(GlobalSystemMediaTransportControlsSession session)
         {
-            var timeline = session.GetTimelineProperties();
-            if (timeline != null)
+            try
             {
-                var newPos = timeline.Position.Subtract(TimeSpan.FromSeconds(10));
-                if (newPos < TimeSpan.Zero) newPos = TimeSpan.Zero;
-                await session.TryChangePlaybackPositionAsync(newPos.Ticks);
+                var timeline = session.GetTimelineProperties();
+                if (timeline != null)
+                {
+                    var newPos = timeline.Position.Subtract(TimeSpan.FromSeconds(10));
+                    if (newPos < TimeSpan.Zero) newPos = TimeSpan.Zero;
+                    await session.TryChangePlaybackPositionAsync(newPos.Ticks);
+                }
             }
+            catch (Exception ex)
+            {
+                var details = FormatExceptionDetails(ex);
+                LogError($"SeekBackward error: {details}");
+            }
+        }
+
+        private static string FormatExceptionDetails(Exception ex)
+        {
+            var details = ex.GetType().Name;
+
+            if (ex is System.Runtime.InteropServices.COMException comEx)
+            {
+                details += $" [HRESULT: 0x{comEx.HResult:X8}]";
+            }
+
+            if (!string.IsNullOrEmpty(ex.Message))
+            {
+                details += $" - {ex.Message}";
+            }
+
+            if (ex.InnerException != null)
+            {
+                details += $" | Inner: {ex.InnerException.GetType().Name}";
+            }
+
+            return details;
+        }
+
+        private static void LogError(string message)
+        {
+            try
+            {
+                string logPath = Path.Combine(Path.GetTempPath(), "sidecar.log");
+                string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
+                File.AppendAllText(logPath, $"[{timestamp}] PlaybackControlService: {message}\n");
+            }
+            catch { /* Ignore logging errors */ }
         }
     }
 }

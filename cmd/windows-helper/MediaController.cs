@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Windows.Media.Control;
 using QuazaarMedia.Services;
+using QuazaarMedia.Utilities;
 
 namespace QuazaarMedia
 {
@@ -17,43 +18,52 @@ namespace QuazaarMedia
             {
                 _manager = await GlobalSystemMediaTransportControlsSessionManager.RequestAsync();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine($"{{\"status\": \"error\", \"message\": \"Init Failed: {JsonHelper.Escape(ex.Message)}\"}}");
             }
         }
 
         internal async Task HandleCommand(CommandObj cmd)
         {
-            // Ensure manager exists
-            if (_manager == null)
+            try
             {
-                try
+                // Ensure manager exists
+                if (_manager == null)
                 {
-                    _manager = await GlobalSystemMediaTransportControlsSessionManager.RequestAsync();
+                    try
+                    {
+                        _manager = await GlobalSystemMediaTransportControlsSessionManager.RequestAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"{{\"status\": \"error\", \"message\": \"Manager Retry Failed: {JsonHelper.Escape(ex.Message)}\"}}");
+                    }
                 }
-                catch
+
+                if (_manager == null)
                 {
+                    // If we still can't get manager, return error or idle
+                    if (cmd.Action == "info") Console.WriteLine("{\"status\": \"idle\"}");
+                    else Console.WriteLine("{\"status\": \"error\", \"message\": \"no manager\"}");
+                    return;
                 }
-            }
 
-            if (_manager == null)
+                var session = _manager.GetCurrentSession();
+
+                if (cmd.Action == "info")
+                {
+                    await _statusService.GetAndPrintStatus(session);
+                    return;
+                }
+
+                // Control commands
+                await _playbackService.ExecutePlaybackCommand(session, cmd.Action ?? "");
+            }
+            catch (Exception ex)
             {
-                // If we still can't get manager, return error or idle
-                if (cmd.Action == "info") Console.WriteLine("{\"status\": \"idle\"}");
-                else Console.WriteLine("{\"status\": \"error\", \"message\": \"no manager\"}");
-                return;
+                Console.WriteLine($"{{\"status\": \"error\", \"message\": \"Command Error: {JsonHelper.Escape(ex.Message)} ({ex.GetType().Name})\"}}");
             }
-
-            var session = _manager.GetCurrentSession();
-
-            if (cmd.Action == "info")
-            {
-                await _statusService.GetAndPrintStatus(session);
-                return;
-            }
-
-            // Control commands
-            await _playbackService.ExecutePlaybackCommand(session, cmd.Action ?? "");
         }
     }
 }
