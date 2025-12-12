@@ -7,3 +7,4 @@ quazaar
 *.temp.md
 /internal/sidecar/temp 
 server.exe
+sidecar.log

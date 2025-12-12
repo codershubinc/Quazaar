@@ -1,116 +1,78 @@
+using System;
 using System.Text;
-using Windows.Media.Control;
-using QuazaarMedia;
+using System.Text.Json;
+using System.Threading.Tasks;
 
-// Quazaar Media Helper - Native AOT Optimized
-// Reads commands from Stdin, executes Media API calls, writes JSON to Stdout.
-
-class Program
+namespace QuazaarMedia
 {
-    static async Task Main(string[] args)
+    class Program
     {
-        // 1. Setup Encoding for Pipe Communication (Critical for Go IPC)
-        Console.InputEncoding = Encoding.UTF8;
-        Console.OutputEncoding = Encoding.UTF8;
+        private static int _commandCount = 0;
+        private static MediaController? _controller;
 
-        try
+        static async Task Main(string[] args)
         {
-            // Connect to Windows Media API
-            var manager = await GlobalSystemMediaTransportControlsSessionManager.RequestAsync();
+            // Ensure console uses UTF8
+            Console.OutputEncoding = Encoding.UTF8;
+            Console.InputEncoding = Encoding.UTF8;
 
-            // 2. Handshake: Tell Go we are ready
+            // Handshake for Go app
             Console.WriteLine("{\"status\": \"ready\"}");
 
-            // 3. Command Loop
-            string? line;
-            while ((line = Console.ReadLine()) != null)
+            // Initialize controller
+            _controller = new MediaController();
+            await _controller.InitializeAsync();
+
+            // Main command loop - Request/Response model
+            await ReadCommands();
+        }
+
+        static async Task ReadCommands()
+        {
+            while (true)
             {
-                if (string.IsNullOrWhiteSpace(line)) continue;
+                string? line = null;
+                try
+                {
+                    line = await Console.In.ReadLineAsync();
+                }
+                catch (Exception)
+                {
+                    break;
+                }
+
+                if (line == null)
+                {
+                    break;
+                }
 
                 try
                 {
-                    // Basic parsing
-                    var action = Utils.ParseAction(line);
-                    var session = manager.GetCurrentSession();
-
-                    if (session == null)
+                    // Use Source Generator Context for deserialization
+                    var cmd = JsonSerializer.Deserialize(line, AppJsonContext.Default.CommandObj);
+                    if (cmd != null && _controller != null)
                     {
-                        Console.WriteLine("{\"error\": \"no_session\"}");
-                        continue;
+                        await _controller.HandleCommand(cmd);
                     }
-
-                    switch (action)
-                    {
-                        case "info":
-                            await MediaSessionHelper.OutputInfo(session);
-                            break;
-                        case "artwork":
-                            await Artwork.SaveArtworkAsync(session);
-                            break;
-                        case "play":
-                            await session.TryPlayAsync();
-                            Utils.Ok();
-                            break;
-                        case "pause":
-                            await session.TryPauseAsync();
-                            Utils.Ok();
-                            break;
-                        case "play_pause":
-                        case "toggle":
-                            await session.TryTogglePlayPauseAsync();
-                            Utils.Ok();
-                            break;
-                        case "next":
-                            await session.TrySkipNextAsync();
-                            Utils.Ok();
-                            break;
-                        case "prev":
-                            await session.TrySkipPreviousAsync();
-                            Utils.Ok();
-                            break;
-                        case "seek_forward":
-                            // Seek forward 10 seconds
-                            var posFwd = session.GetTimelineProperties().Position.Add(TimeSpan.FromSeconds(10));
-                            await session.TryChangePlaybackPositionAsync(posFwd.Ticks);
-                            Utils.Ok();
-                            break;
-                        case "seek_backward":
-                            // Seek backward 10 seconds
-                            var posBack = session.GetTimelineProperties().Position.Subtract(TimeSpan.FromSeconds(10));
-                            // Ensure we don't seek before 0
-                            if (posBack.Ticks < 0) posBack = TimeSpan.Zero;
-                            await session.TryChangePlaybackPositionAsync(posBack.Ticks);
-                            Utils.Ok();
-                            break;
-                        case "seek":
-                            long seekPos = Utils.ParseLongArg(line, "Position");
-                            if (seekPos >= 0)
-                            {
-                                await session.TryChangePlaybackPositionAsync(TimeSpan.FromMilliseconds(seekPos).Ticks);
-                                Utils.Ok();
-                            }
-                            else
-                            {
-                                Console.WriteLine("{\"error\": \"invalid_seek_position\"}");
-                            }
-                            break;
-                        case "volume":
-                            Console.WriteLine("{\"error\": \"volume_control_not_supported_via_smtc\"}");
-                            break;
-                        default:
-                            Console.WriteLine("{\"error\": \"unknown_command\"}");
-                            break;
-                    }
+                }
+                catch (JsonException)
+                {
+                    Console.WriteLine("{\"status\": \"error\", \"message\": \"json parse error\"}");
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"{{\"error\": \"{Utils.Escape(ex.Message)}\"}}");
+                    var msg = ex.Message.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("\n", " ").Replace("\r", "");
+                    Console.WriteLine($"{{\"status\": \"error\", \"message\": \"{msg}\"}}");
+                }
+
+                // Periodic GC to keep memory low
+                _commandCount++;
+                if (_commandCount > 10)
+                {
+                    _commandCount = 0;
+                    GC.Collect();
                 }
             }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine($"{{\"fatal_error\": \"{Utils.Escape(e.Message)}\"}}");
         }
     }
 }
