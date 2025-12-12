@@ -107,7 +107,7 @@ func getCurrentPlayerMetadataWindows() (models.MediaInfo, error) {
 		}
 
 		if wInfo.Status == "error" {
-			return models.MediaInfo{}, fmt.Errorf("sidecar error: %s  	 ", wInfo.Message, wInfo)
+			return models.MediaInfo{}, fmt.Errorf("sidecar error: %s (raw: %s)", wInfo.Message, resp)
 		}
 
 		artwork := ""
