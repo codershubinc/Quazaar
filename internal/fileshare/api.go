@@ -7,6 +7,7 @@ import (
 )
 
 func RequestTempFileShareAccept(w http.ResponseWriter, r *http.Request) {
+	log.Println("🔔 Temp File Share Accept Request Handler Invoked")
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -33,13 +34,13 @@ func HandleTempFileShareAccept(w http.ResponseWriter, r *http.Request) {
 
 	deviceId := r.URL.Query().Get("deviceId")
 	token := r.URL.Query().Get("token")
-	// log.Printf("🔑 Temp File Share Accept Request - DeviceID: %s, Token: %s", deviceId, token)
+	log.Printf("🔑 Temp File Share Accept Request - DeviceID: %s, Token: %s", deviceId, token)
 
 	// Clean up the used token
 	defer DelFileAcceptTempUris(token)
 
 	if !ValidateFileAcceptTempUri(deviceId, token) {
-		// log.Println("❌ Invalid or expired token")
+		log.Println("❌ Invalid or expired token")
 		http.Error(w, "Invalid or expired token", http.StatusUnauthorized)
 		return
 	}

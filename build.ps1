@@ -24,6 +24,16 @@ if ($LASTEXITCODE -ne 0) { throw "dotnet publish failed" }
 Write-Host "`n[2/3] Embedding Sidecar..." -ForegroundColor Yellow
 Copy-Item -Force (Join-Path $SidecarBuildDir "QuazaarMedia.exe") $SidecarDest
 
+# 3.5 Build Tray App
+Write-Host "`n[2.5/3] Compiling Tray App..." -ForegroundColor Yellow
+$TrayCsprojPath = Join-Path $ProjectRoot "cmd\windows-tray\QuazaarTray.csproj"
+$TrayBuildDir = Join-Path $ProjectRoot "temp\tray_build"
+$TrayDest = Join-Path $ProjectRoot "QuazaarTray.exe"
+if (Test-Path $TrayBuildDir) { Remove-Item -Recurse -Force $TrayBuildDir | Out-Null }
+dotnet publish $TrayCsprojPath -c Release -r win-x64 -p:PublishSingleFile=true --self-contained false -o $TrayBuildDir
+if ($LASTEXITCODE -ne 0) { throw "dotnet publish tray app failed" }
+Copy-Item -Force (Join-Path $TrayBuildDir "QuazaarTray.exe") $TrayDest
+
 # 4. Build Go Binary
 Write-Host "`n[3/3] Building Quazaar (Go)..." -ForegroundColor Yellow
 go build -o $OutputExe $GoMain

@@ -6,10 +6,33 @@ Complete version history and release notes for all Quazaar releases.
 
 ## Version Index
 
-- [v0.0.1.3](#v0013---november-17-2025) - Current Release (Major Restructure)
+- [v0.2.1-nightly "Pulsar"](#v021-nightly-pulsar---december-12-2025) - Current Release (Windows Architecture Overhaul)
+- [v0.0.1.3](#v0013---november-17-2025) - Major Restructure
 - [v0.0.1.2](#v0012---november-16-2025) - Feature Enhancement
 - [v0.0.1.1](#v0011---mid-november-2025) - Stability Update
 - [v0.0.1.0](#v0010---early-november-2025) - Initial Release
+
+---
+
+## [v0.2.1-nightly "Pulsar"] - December 12, 2025
+
+**Status:** 🔴 Nightly - Highly Unstable
+
+### Highlights
+
+- Modular Windows Helper architecture (C#)
+- Robust Sidecar Manager (Go) with crash handling
+- Single binary distribution via `//go:embed`
+- New `build.ps1` build system
+
+### Major Changes
+
+- Refactored `Program.cs` into Services and Controllers
+- Implemented structured JSON error reporting
+- Added automatic sidecar extraction and lifecycle management
+- Fixed critical error formatting bugs
+
+[Full Changelog](./CHANGELOG_v0.2.1.md)
 
 ---
 
@@ -178,15 +201,19 @@ v0.0.1.2 (Features)
     ├─ Utils organization
     └─ More endpoints
 
-v0.0.1.3 (Architecture) ← Current
+v0.0.1.3 (Architecture)
     │
     ├─ Project renamed (Blitz → Quazaar)
     ├─ Go standard layout
     ├─ Database integration
-    ├─ Authentication system
-    ├─ API versioning
-    ├─ Startup banners
-    └─ Centralized routing
+    └─ Authentication system
+
+v0.2.1-nightly (Windows Overhaul) ← Current
+    │
+    ├─ Modular C# Helper
+    ├─ Embedded Sidecar
+    ├─ Crash Handling
+    └─ Build System
 ```
 
 ---
@@ -201,22 +228,23 @@ v0.0.1.3 (Architecture) ← Current
 | v0.0.1.1 | ~8.5 MB     | ~45 MB | 2         | 1        | ~1400 |
 | v0.0.1.2 | ~10 MB      | ~50 MB | 8         | 1+utils  | ~1800 |
 | v0.0.1.3 | ~13 MB      | ~70 MB | 18+       | 10       | ~2500 |
+| v0.2.1-n | ~15 MB      | ~75 MB | 18+       | 12       | ~3200 |
 
 ### Feature Growth
 
-| Feature           | v0.0.1.0 | v0.0.1.1 | v0.0.1.2 | v0.0.1.3 |
-| ----------------- | -------- | -------- | -------- | -------- |
-| WebSocket         | ✅       | ✅       | ✅       | ✅       |
-| Media Info        | ✅       | ✅       | ✅       | ✅       |
-| Player Controls   | ❌       | ❌       | ✅       | ✅       |
-| System Info       | ⚠️       | ⚠️       | ✅       | ✅       |
-| Authentication    | ❌       | ❌       | ❌       | ✅       |
-| Database          | ❌       | ❌       | ❌       | ✅       |
-| API Versioning    | ❌       | ❌       | ❌       | ✅       |
-| Startup Banners   | ❌       | ❌       | ❌       | ✅       |
-| Static Assets     | ❌       | ❌       | ❌       | ✅       |
-| D-Bus Integration | ⚠️       | ⚠️       | ⚠️       | ✅       |
-| Cross-Platform    | ❌       | ❌       | ❌       | ⚠️       |
+| Feature           | v0.0.1.0 | v0.0.1.1 | v0.0.1.2 | v0.0.1.3 | v0.2.1-n |
+| ----------------- | -------- | -------- | -------- | -------- | -------- |
+| WebSocket         | ✅       | ✅       | ✅       | ✅       | ✅       |
+| Media Info        | ✅       | ✅       | ✅       | ✅       | ✅       |
+| Player Controls   | ❌       | ❌       | ✅       | ✅       | ✅       |
+| System Info       | ⚠️       | ⚠️       | ✅       | ✅       | ✅       |
+| Authentication    | ❌       | ❌       | ❌       | ✅       | ✅       |
+| Database          | ❌       | ❌       | ❌       | ✅       | ✅       |
+| API Versioning    | ❌       | ❌       | ❌       | ✅       | ✅       |
+| Startup Banners   | ❌       | ❌       | ❌       | ✅       | ✅       |
+| Static Assets     | ❌       | ❌       | ❌       | ✅       | ✅       |
+| D-Bus Integration | ⚠️       | ⚠️       | ⚠️       | ✅       | ✅       |
+| Cross-Platform    | ❌       | ❌       | ❌       | ⚠️       | ✅       |
 
 ✅ Fully Implemented | ⚠️ Partial | ❌ Not Available
 

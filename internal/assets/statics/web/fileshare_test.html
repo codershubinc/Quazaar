@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Share Test</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #uploadSection {
+            margin-top: 20px;
+            display: none;
+        }
+        #status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>File Share Test</h1>
+    
+    <div class="container">
+        <h2>Step 1: Request Upload Link</h2>
+        <button onclick="requestUploadLink()">Get Upload Link</button>
+        <div id="linkInfo"></div>
+
+        <div id="uploadSection">
+            <h2>Step 2: Upload File</h2>
+            <form id="uploadForm" enctype="multipart/form-data">
+                <input type="file" name="file" id="fileInput" required>
+                <br><br>
+                <button type="submit">Upload File</button>
+            </form>
+            <div id="progress"></div>
+        </div>
+
+        <div id="status"></div>
+    </div>
+
+    <script>
+        let uploadUrl = '';
+
+        async function requestUploadLink() {
+            const statusDiv = document.getElementById('status');
+            const linkInfo = document.getElementById('linkInfo');
+            const uploadSection = document.getElementById('uploadSection');
+            
+            statusDiv.className = '';
+            statusDiv.textContent = 'Requesting link...';
+
+            try {
+                const response = await fetch('/api/v0.1/fileshare/create-accept-uri');
+                const data = await response.json();
+
+                if (response.ok) {
+                    uploadUrl = data.acceptUri;
+                    linkInfo.innerHTML = `<p><strong>Upload URL received:</strong> ${uploadUrl}</p>`;
+                    uploadSection.style.display = 'block';
+                    statusDiv.textContent = '';
+                } else {
+                    throw new Error(data.message || 'Failed to get link');
+                }
+            } catch (error) {
+                statusDiv.className = 'error';
+                statusDiv.textContent = 'Error: ' + error.message;
+            }
+        }
+
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const statusDiv = document.getElementById('status');
+            const fileInput = document.getElementById('fileInput');
+            
+            if (!fileInput.files[0]) {
+                alert('Please select a file');
+                return;
+            }
+
+            statusDiv.className = '';
+            statusDiv.textContent = 'Uploading...';
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            try {
+                const response = await fetch(uploadUrl, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    statusDiv.className = 'success';
+                    statusDiv.textContent = 'File uploaded successfully!';
+                    // Reset form
+                    fileInput.value = '';
+                    document.getElementById('uploadSection').style.display = 'none';
+                    document.getElementById('linkInfo').innerHTML = '';
+                } else {
+                    const text = await response.text();
+                    throw new Error(text || 'Upload failed');
+                }
+            } catch (error) {
+                statusDiv.className = 'error';
+                statusDiv.textContent = 'Upload Error: ' + error.message;
+            }
+        });
+    </script>
+</body>
+</html>

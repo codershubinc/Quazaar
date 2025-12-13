@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -36,8 +37,9 @@ namespace QuazaarMedia
                 {
                     line = await Console.In.ReadLineAsync();
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    LogError($"Failed to read input: {FormatExceptionDetails(ex)}");
                     break;
                 }
 
@@ -55,12 +57,14 @@ namespace QuazaarMedia
                         await _controller.HandleCommand(cmd);
                     }
                 }
-                catch (JsonException)
+                catch (JsonException ex)
                 {
+                    LogError($"JSON parse error: {FormatExceptionDetails(ex)}");
                     Console.WriteLine("{\"status\": \"error\", \"message\": \"json parse error\"}");
                 }
                 catch (Exception ex)
                 {
+                    LogError($"Command processing error: {FormatExceptionDetails(ex)}");
                     var msg = ex.Message.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("\n", " ").Replace("\r", "");
                     Console.WriteLine($"{{\"status\": \"error\", \"message\": \"{msg}\"}}");
                 }
@@ -73,6 +77,39 @@ namespace QuazaarMedia
                     GC.Collect();
                 }
             }
+        }
+
+        static void LogError(string message)
+        {
+            try
+            {
+                string logPath = Path.Combine(Path.GetTempPath(), "sidecar.log");
+                string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
+                File.AppendAllText(logPath, $"[{timestamp}] Program: {message}\n");
+            }
+            catch { /* Ignore logging errors */ }
+        }
+
+        static string FormatExceptionDetails(Exception ex)
+        {
+            var details = ex.GetType().Name;
+
+            if (ex is System.Runtime.InteropServices.COMException comEx)
+            {
+                details += $" [HRESULT: 0x{comEx.HResult:X8}]";
+            }
+
+            if (!string.IsNullOrEmpty(ex.Message))
+            {
+                details += $" - {ex.Message}";
+            }
+
+            if (ex.InnerException != null)
+            {
+                details += $" | Inner: {ex.InnerException.GetType().Name}";
+            }
+
+            return details;
         }
     }
 }

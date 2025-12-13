@@ -33,8 +33,6 @@ func getMetadata() (models.MediaInfo, error) {
 	player := "org.mpris.MediaPlayer2.spotify"
 	obj := conn.Object(player, "/org/mpris/MediaPlayer2")
 
-	// ... rest of your code ...
-	// ...existing code...
 	variant, err := obj.GetProperty("org.mpris.MediaPlayer2.Player.Metadata")
 	if err != nil {
 		return models.MediaInfo{}, err

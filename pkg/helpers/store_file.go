@@ -5,21 +5,29 @@ import (
 	"log"
 	"mime/multipart"
 	"os"
+	"path/filepath"
 )
 
 func StoreFile(filePath string, data multipart.File) error {
-	fileDir := "/home/swap/Downloads/Quazaar/"
-
-	err := os.Mkdir(fileDir, os.ModePerm)
-	if err != nil && !os.IsExist(err) {
-		log.Fatal("Error while creating directory ", filePath, ":", err)
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		log.Println("Error getting user home directory:", err)
 		return err
 	}
 
-	dest, err := os.Create(fileDir + filePath)
-	log.Println("Storing file at:", fileDir+filePath)
+	fileDir := filepath.Join(homeDir, "Downloads", "Quazaar")
+
+	err = os.MkdirAll(fileDir, os.ModePerm)
 	if err != nil {
-		log.Print("Error while creating path ", fileDir+filePath, ":", err)
+		log.Println("Error while creating directory ", fileDir, ":", err)
+		return err
+	}
+
+	fullPath := filepath.Join(fileDir, filePath)
+	dest, err := os.Create(fullPath)
+	log.Println("Storing file at:", fullPath)
+	if err != nil {
+		log.Println("Error while creating file ", fullPath, ":", err)
 		return err
 	}
 	defer dest.Close()
