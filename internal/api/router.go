@@ -9,11 +9,20 @@ import (
 	spotifyAuth "Quazaar/internal/spotify/auth"
 	"Quazaar/internal/system"
 	"Quazaar/internal/websocket"
+	"bytes"
+	"embed"
+	iofs "io/fs"
+	"log"
 	"net/http"
+	"time"
 )
 
+var fs embed.FS
+
 // SetupRoutes configures all HTTP routes for the API
-func SetupRoutes() {
+func SetupRoutes(embedFS embed.FS) {
+	fs = embedFS
+
 	// Root
 	http.HandleFunc("/", serveHome)
 	http.HandleFunc("/filesharetest", serveFileShareTestPage)
@@ -22,10 +31,20 @@ func SetupRoutes() {
 	http.HandleFunc("/ws", middleware.AuthenticationMiddleware(websocket.Handle))
 
 	// Static assets
-	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets/"))))
+	assetsFS, err := iofs.Sub(fs, "assets")
+	if err != nil {
+		log.Println("Error creating assetsFS:", err)
+	} else {
+		http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.FS(assetsFS))))
+	}
 
 	// Web static files
-	http.Handle("/web/", http.StripPrefix("/web/", http.FileServer(http.Dir("statics/web/"))))
+	webFS, err := iofs.Sub(fs, "statics/web")
+	if err != nil {
+		log.Println("Error creating webFS:", err)
+	} else {
+		http.Handle("/web/", http.StripPrefix("/web/", http.FileServer(http.FS(webFS))))
+	}
 
 	// API v0.1 - Authentication
 	http.HandleFunc("/api/v0.1/signup", auth.HandleSignup)
@@ -74,7 +93,13 @@ func serveHome(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	http.ServeFile(w, r, "statics/web/index.html")
+	data, err := fs.ReadFile("statics/web/index.html")
+	if err != nil {
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+	reader := bytes.NewReader(data)
+	http.ServeContent(w, r, "index.html", time.Time{}, reader)
 }
 
 func serveFileShareTestPage(w http.ResponseWriter, r *http.Request) {
@@ -86,5 +111,11 @@ func serveFileShareTestPage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	http.ServeFile(w, r, "statics/web/fileshare_test.html")
+	data, err := fs.ReadFile("statics/web/fileshare_test.html")
+	if err != nil {
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+	reader := bytes.NewReader(data)
+	http.ServeContent(w, r, "fileshare_test.html", time.Time{}, reader)
 }

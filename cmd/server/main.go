@@ -2,6 +2,7 @@ package main
 
 import (
 	"Quazaar/internal/api"
+	"Quazaar/internal/assets"
 	"Quazaar/internal/auth"
 	"Quazaar/internal/banner"
 	"Quazaar/internal/db"
@@ -46,7 +47,7 @@ func main() {
 	}
 
 	// Setup all API routes
-	api.SetupRoutes()
+	api.SetupRoutes(assets.Assets)
 
 	// Setup Spotify routes
 	spotify.SetupRoutes()
