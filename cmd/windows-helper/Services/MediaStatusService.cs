@@ -23,9 +23,9 @@ namespace QuazaarMedia.Services
 
             try
             {
-                GlobalSystemMediaTransportControlsSessionMediaProperties props = null;
-                GlobalSystemMediaTransportControlsSessionTimelineProperties timeline = null;
-                GlobalSystemMediaTransportControlsSessionPlaybackInfo playbackInfo = null;
+                GlobalSystemMediaTransportControlsSessionMediaProperties? props = null;
+                GlobalSystemMediaTransportControlsSessionTimelineProperties? timeline = null;
+                GlobalSystemMediaTransportControlsSessionPlaybackInfo? playbackInfo = null;
 
                 // Try to get props with retry logic
                 try
@@ -79,7 +79,7 @@ namespace QuazaarMedia.Services
         }
 
         // Retry with exponential backoff for transient COM errors
-        private async Task<T> RetryWithBackoff<T>(Func<Task<T>> operation, string operationName) where T : class
+        private async Task<T?> RetryWithBackoff<T>(Func<Task<T>> operation, string operationName) where T : class
         {
             int maxRetries = 3;
             int delayMs = 50;
@@ -109,7 +109,7 @@ namespace QuazaarMedia.Services
         }
 
         private double CalculateCurrentPosition(
-            GlobalSystemMediaTransportControlsSessionTimelineProperties timeline,
+            GlobalSystemMediaTransportControlsSessionTimelineProperties? timeline,
             GlobalSystemMediaTransportControlsSessionPlaybackInfo playbackInfo)
         {
             double currentPosition = 0;
@@ -133,7 +133,7 @@ namespace QuazaarMedia.Services
             GlobalSystemMediaTransportControlsSession session,
             GlobalSystemMediaTransportControlsSessionPlaybackInfo playbackInfo,
             double currentPosition,
-            GlobalSystemMediaTransportControlsSessionTimelineProperties timeline,
+            GlobalSystemMediaTransportControlsSessionTimelineProperties? timeline,
             string artworkUri)
         {
             var json = $@"{{

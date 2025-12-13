@@ -11,6 +11,8 @@ namespace QuazaarMedia
         private GlobalSystemMediaTransportControlsSessionManager? _manager;
         private readonly PlaybackControlService _playbackService = new();
         private readonly MediaStatusService _statusService = new();
+        private readonly VolumeControlService _volumeService = new();
+        private readonly BrightnessControlService _brightnessService = new();
 
         public async Task InitializeAsync()
         {
@@ -28,6 +30,17 @@ namespace QuazaarMedia
         {
             try
             {
+                // Add these lines at the start of HandleCommand
+                if (cmd.Action == "volume_set") { _volumeService.SetVolume(cmd.Level); return; }
+                if (cmd.Action == "volume_up") { _volumeService.VolumeUp(); return; }
+                if (cmd.Action == "volume_down") { _volumeService.VolumeDown(); return; }
+                if (cmd.Action == "mute") { _volumeService.ToggleMute(); return; }
+
+                if (cmd.Action == "brightness_set") { _brightnessService.SetBrightness(cmd.Level); return; }
+                if (cmd.Action == "brightness_up") { _brightnessService.BrightnessUp(); return; }
+                if (cmd.Action == "brightness_down") { _brightnessService.BrightnessDown(); return; }
+                if (cmd.Action == "brightness_get") { _brightnessService.GetAndPrintBrightness(); return; }
+
                 // Ensure manager exists
                 if (_manager == null)
                 {
