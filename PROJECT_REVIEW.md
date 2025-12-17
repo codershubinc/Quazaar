@@ -2,7 +2,7 @@
 
 ## 🎯 Features
 
-Quazaar is a comprehensive remote control and media integration server for Linux.
+Quazaar is a comprehensive remote control and media integration server for Linux and Windows.
 
 *   **Remote Media Control**:
     *   **Linux**: Integrates with `playerctl` (MPRIS) to control media players (Play, Pause, Next, Previous).
