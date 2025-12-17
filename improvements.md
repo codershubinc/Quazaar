@@ -63,3 +63,4 @@ The `internal/fileshare` handler uses `r.ParseMultipartForm(100 << 20)`. This pa
 - **Unit Tests:** Add `_test.go` files, particularly for the `auth` and `helpers` packages.
 - **Linter:** Integrate `golangci-lint` to catch static analysis issues early.
 - **Makefile:** Create a `Makefile` to standardize commands like `make build`, `make run`, and `make test`.
+- **Contribution Standards:** Add a `.github/PULL_REQUEST_TEMPLATE.md` to standardize contributions (Added).
