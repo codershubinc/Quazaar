@@ -1,13 +1,12 @@
 package poller
 
 import (
-	"context"
 	"fmt"
 	"time"
 )
 
-// Poller runs fn every interval until context is canceled
-func Poller(ctx context.Context, interval time.Duration, fn func()) {
+// Poller runs fn every interval until quit channel is closed
+func Poller(interval time.Duration, quit <-chan struct{}, fn func()) {
 	// fmt.Println("Poller started, running every", interval)
 	ticker := time.NewTicker(interval)
 	defer ticker.Stop()
@@ -18,8 +17,8 @@ func Poller(ctx context.Context, interval time.Duration, fn func()) {
 		select {
 		case <-ticker.C:
 			fn()
-		case <-ctx.Done():
-			fmt.Println("Poller stopped via context")
+		case <-quit:
+			fmt.Println("Poller stopped via quit signal")
 			return
 		}
 	}

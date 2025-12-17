@@ -6,13 +6,13 @@ import (
 	"Quazaar/internal/middleware"
 	"Quazaar/internal/player"
 	spotifyArtist "Quazaar/internal/spotify/artist"
-	"Quazaar/internal/logger"
 	spotifyAuth "Quazaar/internal/spotify/auth"
 	"Quazaar/internal/system"
 	"Quazaar/internal/websocket"
 	"bytes"
 	"embed"
 	iofs "io/fs"
+	"log"
 	"net/http"
 	"time"
 )
@@ -33,7 +33,7 @@ func SetupRoutes(embedFS embed.FS) {
 	// Static assets
 	assetsFS, err := iofs.Sub(fs, "assets")
 	if err != nil {
-		logger.Error("Error creating assetsFS", "error", err)
+		log.Println("Error creating assetsFS:", err)
 	} else {
 		http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.FS(assetsFS))))
 	}
@@ -41,7 +41,7 @@ func SetupRoutes(embedFS embed.FS) {
 	// Web static files
 	webFS, err := iofs.Sub(fs, "statics/web")
 	if err != nil {
-		logger.Error("Error creating webFS", "error", err)
+		log.Println("Error creating webFS:", err)
 	} else {
 		http.Handle("/web/", http.StripPrefix("/web/", http.FileServer(http.FS(webFS))))
 	}

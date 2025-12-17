@@ -1,16 +1,17 @@
 package helpers
 
 import (
-	"Quazaar/internal/logger"
 	"io"
+	"log"
+	"mime/multipart"
 	"os"
 	"path/filepath"
 )
 
-func StoreFile(filePath string, data io.Reader) error {
+func StoreFile(filePath string, data multipart.File) error {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
-		logger.Error("Error getting user home directory", "error", err)
+		log.Println("Error getting user home directory:", err)
 		return err
 	}
 
@@ -18,15 +19,15 @@ func StoreFile(filePath string, data io.Reader) error {
 
 	err = os.MkdirAll(fileDir, os.ModePerm)
 	if err != nil {
-		logger.Error("Error while creating directory", "dir", fileDir, "error", err)
+		log.Println("Error while creating directory ", fileDir, ":", err)
 		return err
 	}
 
 	fullPath := filepath.Join(fileDir, filePath)
 	dest, err := os.Create(fullPath)
-	logger.Info("Storing file at", "path", fullPath)
+	log.Println("Storing file at:", fullPath)
 	if err != nil {
-		logger.Error("Error while creating file", "path", fullPath, "error", err)
+		log.Println("Error while creating file ", fullPath, ":", err)
 		return err
 	}
 	defer dest.Close()
