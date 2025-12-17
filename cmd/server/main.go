@@ -5,33 +5,38 @@ import (
 	"Quazaar/internal/assets"
 	"Quazaar/internal/auth"
 	"Quazaar/internal/banner"
+	"Quazaar/internal/config"
 	"Quazaar/internal/db"
+	"Quazaar/internal/logger"
 	"Quazaar/internal/poller"
 	"Quazaar/internal/spotify"
+	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
+	"os/signal"
 	"runtime"
-
-	"github.com/joho/godotenv"
+	"syscall"
+	"time"
 )
 
 func main() {
-	// Load .env file
-	if err := godotenv.Load(); err != nil {
-		log.Println("⚠️  .env file not found, using system environment variables")
-	}
+	// Initialize logger
+	logger.Init()
+
+	// Load configuration
+	config.Load()
 
 	//temp:
-	log.Printf("OS type is %s", runtime.GOOS)
+	logger.Info("OS type", "os", runtime.GOOS)
 	// Display startup banner
 	// Options: banner.Variant1(), banner.Variant2(), banner.Variant3(), banner.Variant4()
 	banner.Show()
 
 	// Initialize database
 	if err := db.Init(); err != nil {
-		log.Fatal("❌ Failed to initialize database:", err)
+		logger.Error("❌ Failed to initialize database", "error", err)
+		os.Exit(1)
 	}
 	defer db.CloseDB()
 	// Initialize auth package with DB
@@ -41,9 +46,9 @@ func main() {
 
 	isLoggedIn := auth.IsLoggedIn()
 	if !isLoggedIn {
-		log.Println("⚠️  No user found. Please sign up first.")
+		logger.Warn("⚠️  No user found. Please sign up first.")
 	} else {
-		log.Println("✅ User found. Proceeding to start the server.")
+		logger.Info("✅ User found. Proceeding to start the server.")
 	}
 
 	// Setup all API routes
@@ -52,30 +57,55 @@ func main() {
 	// Setup Spotify routes
 	spotify.SetupRoutes()
 
+	// Create a context that listens for signals
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	// Start media poller
-	go poller.Handle()
+	go poller.Handle(ctx)
 
 	// Initialize Spotify integration
 	spotify.Init()
 
-	// Start the server
-	fmt.Println("")
-	fmt.Println("📡 Starting server...")
-	fmt.Println("")
-
-	port := os.Getenv("LOCAL_HOST_PORT_DEV")
-	if port == "" {
-		port = "8765"
-	}
-
-	ip := os.Getenv("LOCAL_HOST_IP")
-	if ip == "" {
-		ip = "0.0.0.0"
-	}
+	port := config.GlobalConfig.LocalHostPortDev
+	ip := config.GlobalConfig.LocalHostIP
 
 	localAddr := ip + ":" + port
-	log.Println("✅ Server listening at http://" + localAddr)
-	if err := http.ListenAndServe(localAddr, nil); err != nil {
-		log.Fatal("❌ Server error:", err)
+	srv := &http.Server{
+		Addr:    localAddr,
+		Handler: nil, // uses DefaultServeMux
 	}
+
+	// Start the server in a goroutine
+	go func() {
+		fmt.Println("")
+		fmt.Println("📡 Starting server...")
+		fmt.Println("")
+		logger.Info("✅ Server listening", "url", "http://"+localAddr)
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			logger.Error("❌ Server error", "error", err)
+			os.Exit(1)
+		}
+	}()
+
+	// Wait for interrupt signal to gracefully shutdown the server
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	logger.Info("🛑 Shutting down server...")
+
+	// The context is used to inform the server it has 5 seconds to finish
+	// the request it is currently handling
+	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer shutdownCancel()
+
+	// Cancel the main context to stop the poller and other background tasks
+	cancel()
+
+	if err := srv.Shutdown(shutdownCtx); err != nil {
+		logger.Error("❌ Server forced to shutdown", "error", err)
+		os.Exit(1)
+	}
+
+	logger.Info("👋 Server exiting")
 }

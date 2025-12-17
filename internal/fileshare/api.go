@@ -1,13 +1,14 @@
 package fileShare
 
 import (
+	"Quazaar/internal/logger"
 	"Quazaar/pkg/helpers"
-	"log"
+	"io"
 	"net/http"
 )
 
 func RequestTempFileShareAccept(w http.ResponseWriter, r *http.Request) {
-	log.Println("🔔 Temp File Share Accept Request Handler Invoked")
+	logger.Info("🔔 Temp File Share Accept Request Handler Invoked")
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -26,7 +27,7 @@ func RequestTempFileShareAccept(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleTempFileShareAccept(w http.ResponseWriter, r *http.Request) {
-	log.Println("🔔 Temp File Share Accept Handler Invoked")
+	logger.Info("🔔 Temp File Share Accept Handler Invoked")
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -34,33 +35,55 @@ func HandleTempFileShareAccept(w http.ResponseWriter, r *http.Request) {
 
 	deviceId := r.URL.Query().Get("deviceId")
 	token := r.URL.Query().Get("token")
-	log.Printf("🔑 Temp File Share Accept Request - DeviceID: %s, Token: %s", deviceId, token)
+	logger.Info("🔑 Temp File Share Accept Request", "deviceId", deviceId, "token", token)
 
 	// Clean up the used token
 	defer DelFileAcceptTempUris(token)
 
 	if !ValidateFileAcceptTempUri(deviceId, token) {
-		log.Println("❌ Invalid or expired token")
+		logger.Warn("❌ Invalid or expired token")
 		http.Error(w, "Invalid or expired token", http.StatusUnauthorized)
 		return
 	}
 
-	err := r.ParseMultipartForm(100 << 20) // 100 MB max memory
+	reader, err := r.MultipartReader()
 	if err != nil {
-		http.Error(w, "Failed to parse multipart form", http.StatusBadRequest)
+		http.Error(w, "Failed to get multipart reader", http.StatusBadRequest)
 		return
 	}
 
-	file, header, err := r.FormFile("file")
-	if err != nil {
+	fileFound := false
+	for {
+		part, err := reader.NextPart()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			http.Error(w, "Failed to read part", http.StatusInternalServerError)
+			return
+		}
+
+		if part.FormName() == "file" {
+			filename := part.FileName()
+			if filename == "" {
+				continue
+			}
+
+			err = helpers.StoreFile(filename, part)
+			if err != nil {
+				logger.Error("Failed to store file", "error", err)
+				http.Error(w, "Failed to store file", http.StatusInternalServerError)
+				return
+			}
+			part.Close()
+			fileFound = true
+		}
+	}
+
+	if !fileFound {
 		http.Error(w, "Failed to get file from form", http.StatusBadRequest)
 		return
 	}
-	defer file.Close()
-	err = helpers.StoreFile(header.Filename, file)
-	if err != nil {
-		http.Error(w, "Failed to store file", http.StatusInternalServerError)
-		return
-	}
+
 	w.WriteHeader(http.StatusOK)
 }

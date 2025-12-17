@@ -1,21 +1,22 @@
 package poller
 
 import (
+	"Quazaar/internal/logger"
 	"Quazaar/internal/player"
 	"Quazaar/internal/websocket"
 	"Quazaar/pkg/models"
-	"fmt"
+	"context"
 	"time"
 )
 
-func Handle() {
+func Handle(ctx context.Context) {
 	// fmt.Println("Started poller Handler ....")
 
-	Poller(1*time.Second, make(chan struct{}), func() {
+	Poller(ctx, 1*time.Second, func() {
 		msg, err := player.GetCurrentPlayerFunctions().GetCurrentPlayerMetadata()
 
 		if err != nil {
-			fmt.Printf("⚠️ Failed to get player info: %v\n", err)
+			logger.Error("⚠️ Failed to get player info", "error", err)
 			return
 		}
 
@@ -27,10 +28,4 @@ func Handle() {
 			},
 		)
 	})
-}
-
-func QuiteChan() chan struct{} {
-	quit := make(chan struct{})
-	// close(quit)
-	return quit
 }
