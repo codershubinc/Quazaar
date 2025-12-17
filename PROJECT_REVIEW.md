@@ -5,11 +5,12 @@
 Quazaar is a comprehensive remote control and media integration server for Linux.
 
 *   **Remote Media Control**:
-    *   Integrates with `playerctl` (MPRIS) to control media players (Play, Pause, Next, Previous).
-    *   Real-time retrieval of metadata (Title, Artist, Album, Art).
+    *   **Linux**: Integrates with `playerctl` (MPRIS) to control media players (Play, Pause, Next, Previous).
+    *   **Windows**: Uses a dedicated C# sidecar (`QuazaarMedia.exe`) embedded in the binary to interface with the Windows Media Session Manager (SMTC). This allows control of Spotify, Chrome, generic media apps, and system volume on Windows.
+    *   Real-time retrieval of metadata (Title, Artist, Album, Art) on both platforms.
     *   Specific support for Spotify integration (Authorization, Artist info).
-*   **System Control**:
-    *   View WiFi status and Bluetooth devices.
+*   **System Control (Linux Only)**:
+    *   View WiFi status and Bluetooth devices (relies on `nmcli` and `bluetoothctl`).
     *   Volume control implementation (referenced in Todo).
 *   **File Sharing**:
     *   Temporary file upload mechanism allowing remote devices to send files to the host.
@@ -28,10 +29,15 @@ Quazaar is a comprehensive remote control and media integration server for Linux
 *   **Modular Architecture**: The project follows the Standard Go Project Layout (using `cmd/`, `internal/`, `pkg/`), keeping concerns separated (e.g., `auth`, `player`, `spotify`, `websocket`).
 *   **Single Binary Deployment**: Usage of `embed` package allows bundling the web frontend and assets directly into the Go binary, simplifying distribution.
 *   **Standard Library Usage**: Heavy reliance on the standard library (`net/http`, `image`, `os`) reduces external dependency bloat.
-*   **Cross-Platform Foundations**: While currently Linux-focused (`playerctl`, `dbus`), the structure allows for adding Windows/macOS implementations (some Windows stubs were observed in the code).
+*   **Cross-Platform Architecture**:
+    *   **Linux**: Native implementation via DBus/MPRIS.
+    *   **Windows**: Creative "Sidecar" pattern where a helper .exe is embedded in the Go binary, extracted at runtime, and communicates via Stdin/Stdout JSON streams. This solves the difficulty of calling Windows Runtime APIs from Go.
 *   **Real-Time Capabilities**: The poller architecture ensures connected clients receive up-to-date media information without manual refreshing.
 
 ## ❌ Cons
+
+*   **Feature Parity**:
+    *   System information (WiFi, Bluetooth) is currently implemented only for Linux. The Windows implementation lacks these system-level features.
 
 *   **Observability & Debugging**:
     *   Logging is inconsistent, mixing `fmt.Println` and `log.Println`. This makes parsing logs in production difficult.
