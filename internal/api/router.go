@@ -7,6 +7,7 @@ import (
 	"Quazaar/internal/player"
 	spotifyArtist "Quazaar/internal/spotify/artist"
 	spotifyAuth "Quazaar/internal/spotify/auth"
+	spotifyTrack "Quazaar/internal/spotify/track"
 	"Quazaar/internal/system"
 	"Quazaar/internal/websocket"
 	"bytes"
@@ -75,13 +76,17 @@ func SetupRoutes(embedFS embed.FS) {
 	http.HandleFunc("/api/v0.1/system/wifi", middleware.AuthenticationMiddleware(system.HandleGetWiFiInfo))
 	http.HandleFunc("/api/v0.1/system/bluetooth", middleware.AuthenticationMiddleware(system.HandleGetBluetoothDevices))
 
+	// API v0.1 - Spotify
+	http.HandleFunc("/api/v0.1/spotify/track/currently-playing", middleware.AuthenticationMiddleware(spotifyTrack.CurrentlyPlayingTrackApi))
+	http.HandleFunc("/api/v0.1/spotify/track/add-to-library", middleware.AuthenticationMiddleware(spotifyTrack.AddToLibraryApi))
+	http.HandleFunc("/api/v0.1/spotify/track/check-in-library", middleware.AuthenticationMiddleware(spotifyTrack.CheckUserHasTrackInLibrary))
 	http.HandleFunc("/api/v0.1/spotify/artist", middleware.AuthenticationMiddleware(spotifyArtist.GetArtistInfo))
 	http.HandleFunc("/api/v0.1/spotify/artist/follow", middleware.AuthenticationMiddleware(spotifyArtist.FollowArtist))
 	http.HandleFunc("/api/v0.1/spotify/me", middleware.AuthenticationMiddleware(spotifyAuth.GetUser))
-
 	// API v0.1 - File Share
 	http.HandleFunc("/api/v0.1/fileshare/create-accept-uri", fileShare.RequestTempFileShareAccept)
 	http.HandleFunc("/api/v0.1/fileshare/acceptfile", fileShare.HandleTempFileShareAccept)
+
 }
 
 func serveHome(w http.ResponseWriter, r *http.Request) {

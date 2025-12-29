@@ -29,7 +29,7 @@ func HandleArtworkRequest(artworkPath string) (string, error) {
 	artworkPath = strings.TrimPrefix(artworkPath, "file://")
 	imageBuffer, err := os.ReadFile(artworkPath)
 	if err != nil {
-		fmt.Println("Something went wrong while reading the file", err)
+		// fmt.Println("Something went wrong while reading the file", err)
 		return "", err
 	}
 	// Get file extension and determine image type

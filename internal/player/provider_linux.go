@@ -3,6 +3,7 @@
 package player
 
 import (
+	"Quazaar/internal/media"
 	"Quazaar/pkg/models"
 	"fmt"
 	"strings"
@@ -12,8 +13,9 @@ import (
 )
 
 var (
-	dbusConn *dbus.Conn
-	dbusOnce sync.Once
+	dbusConn         *dbus.Conn
+	dbusOnce         sync.Once
+	lastActivePlayer string
 )
 
 func GetDBusConnection() (*dbus.Conn, error) {
@@ -24,13 +26,82 @@ func GetDBusConnection() (*dbus.Conn, error) {
 	return dbusConn, err
 }
 
+func findActivePlayer(conn *dbus.Conn) (string, error) {
+	var names []string
+	err := conn.BusObject().Call("org.freedesktop.DBus.ListNames", 0).Store(&names)
+	if err != nil {
+		return "", err
+	}
+
+	var players []string
+	for _, name := range names {
+		if strings.HasPrefix(name, "org.mpris.MediaPlayer2.") {
+			players = append(players, name)
+		}
+	}
+
+	if len(players) == 0 {
+		return "", fmt.Errorf("no players found")
+	}
+
+	var pausedPlayer string
+	var spotifyPlayer string
+
+	// Priority: Playing > Paused > Spotify > Stopped
+	for _, player := range players {
+		if strings.Contains(strings.ToLower(player), "spotify") {
+			spotifyPlayer = player
+		}
+
+		obj := conn.Object(player, "/org/mpris/MediaPlayer2")
+		statusVar, err := obj.GetProperty("org.mpris.MediaPlayer2.Player.PlaybackStatus")
+		if err != nil {
+			continue
+		}
+		status := statusVar.Value().(string)
+		if status == "Playing" {
+			lastActivePlayer = player
+			return player, nil
+		}
+
+		if status == "Paused" && pausedPlayer == "" {
+			pausedPlayer = player
+		}
+	}
+
+	if pausedPlayer != "" {
+		lastActivePlayer = pausedPlayer
+		return pausedPlayer, nil
+	}
+
+	// Try last active player if it still exists
+	if lastActivePlayer != "" {
+		for _, p := range players {
+			if p == lastActivePlayer {
+				return lastActivePlayer, nil
+			}
+		}
+	}
+
+	if spotifyPlayer != "" {
+		return spotifyPlayer, nil
+	}
+
+	// If none playing, return the first one
+	return players[0], nil
+}
+
 func getMetadata() (models.MediaInfo, error) {
 	conn, err := GetDBusConnection()
 	if err != nil {
 		return models.MediaInfo{}, err
 	}
 
-	player := "org.mpris.MediaPlayer2.spotify"
+	player, err := findActivePlayer(conn)
+	if err != nil {
+		return models.MediaInfo{}, err
+	}
+
 	obj := conn.Object(player, "/org/mpris/MediaPlayer2")
 
 	variant, err := obj.GetProperty("org.mpris.MediaPlayer2.Player.Metadata")
@@ -62,15 +133,19 @@ func getMetadata() (models.MediaInfo, error) {
 		return "0"
 	}
 
+	playerName := strings.TrimPrefix(player, "org.mpris.MediaPlayer2.")
+
+	artwork, _ := media.HandleArtworkRequest(getString("mpris:artUrl"))
+
 	return models.MediaInfo{
 		Title:    getString("xesam:title"),
 		Artist:   getString("xesam:artist"),
 		Album:    getString("xesam:album"),
-		Artwork:  getString("mpris:artUrl"),
+		Artwork:  artwork,
 		Length:   getInt64("mpris:length"),
 		Status:   statusVar.Value().(string),
 		Position: fmt.Sprintf("%v", positionVar.Value()),
-		Player:   "spotify",
+		Player:   playerName,
 	}, nil
 }
 
@@ -178,7 +253,22 @@ var LinuxDBusPlayer = models.PlayerFunctions{
 	GetCurrentPlayerMetadata: getMetadata,
 	// for now just focus on spotify buddy ..........
 	GetAllPlayers: func() ([]string, error) {
-		return []string{"spotify"}, nil
+		conn, err := GetDBusConnection()
+		if err != nil {
+			return nil, err
+		}
+		var names []string
+		err = conn.BusObject().Call("org.freedesktop.DBus.ListNames", 0).Store(&names)
+		if err != nil {
+			return nil, err
+		}
+		var players []string
+		for _, name := range names {
+			if strings.HasPrefix(name, "org.mpris.MediaPlayer2.") {
+				players = append(players, strings.TrimPrefix(name, "org.mpris.MediaPlayer2."))
+			}
+		}
+		return players, nil
 	},
 }
 
