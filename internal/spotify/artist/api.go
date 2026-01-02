@@ -3,6 +3,7 @@ package spotifyArtist
 import (
 	"Quazaar/pkg/helpers"
 	"fmt"
+	"log"
 	"net/http"
 )
 
@@ -16,7 +17,8 @@ func GetArtistInfo(w http.ResponseWriter, r *http.Request) {
 
 	data, res, err := getArtistInfo(artistID)
 	if err != nil {
-		http.Error(w, "Failed to get artist info", http.StatusInternalServerError)
+		log.Println("err ::", err)
+		http.Error(w, "Failed to get artist info :: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 	helpers.SendJsonDataToClient(w, res.StatusCode, data)

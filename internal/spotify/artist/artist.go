@@ -9,8 +9,12 @@ import (
 )
 
 func getArtistInfo(artistID string) (any, *http.Response, error) {
+	base := spotifyConfig.SpotifyAPIBaseURL
+	if base == "" {
+		base = "https://api.spotify.com/v1"
+	}
 
-	url := spotifyConfig.SpotifyAPIBaseURL + "/artists/" + artistID
+	url := base + "/artists/" + artistID
 	fmt.Println("Spotify req uri ::", url)
 
 	accessToken, err := spotifyTokens.GetSpotifyAccessToken()
