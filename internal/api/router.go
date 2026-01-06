@@ -9,6 +9,7 @@ import (
 	spotifyAuth "Quazaar/internal/spotify/auth"
 	spotifyTrack "Quazaar/internal/spotify/track"
 	"Quazaar/internal/system"
+	systemBattery "Quazaar/internal/system/battery"
 	"Quazaar/internal/websocket"
 	"bytes"
 	"embed"
@@ -87,6 +88,8 @@ func SetupRoutes(embedFS embed.FS) {
 	http.HandleFunc("/api/v0.1/fileshare/create-accept-uri", fileShare.RequestTempFileShareAccept)
 	http.HandleFunc("/api/v0.1/fileshare/acceptfile", fileShare.HandleTempFileShareAccept)
 
+	// API v0.1 - System  TODO: Move to systemBattery package
+	http.HandleFunc("/api/v0.1/system/battery", systemBattery.GetBatteryInfoApi)
 }
 
 func serveHome(w http.ResponseWriter, r *http.Request) {
