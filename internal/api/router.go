@@ -14,7 +14,7 @@ import (
 	systemBrightness "Quazaar/internal/system/brightness"
 	systemSound "Quazaar/internal/system/sound"
 	systemVolume "Quazaar/internal/system/volume"
-	systemWakaTime "Quazaar/internal/system/wakatime"
+	systemWakaTime "Quazaar/internal/wakatime"
 	"Quazaar/internal/websocket"
 	"bytes"
 	"embed"
