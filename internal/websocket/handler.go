@@ -115,9 +115,9 @@ func Handle(res http.ResponseWriter, req *http.Request) {
 			switch command {
 			case "player_toggle", "play-pause":
 				success, err = pf.PlayPause()
-			case "next":
+			case "next", "player_next":
 				success, err = pf.Next()
-			case "prev", "previous":
+			case "prev", "previous", "player_prev", "player_previous":
 				success, err = pf.Prev()
 			case "seek_forward":
 				success, err = pf.SeekForward()

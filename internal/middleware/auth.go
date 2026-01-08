@@ -2,13 +2,11 @@ package middleware
 
 import (
 	"Quazaar/internal/db"
-	"fmt"
 	"net/http"
 )
 
 func AuthenticationMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("URL ==>", r.URL.String())
 		_, authToken := ExtractToken(r)
 		valid, err := ValidateDeviceId(authToken)
 		if err != nil {
@@ -29,7 +27,6 @@ func ExtractToken(r *http.Request) (typeOfToken, token string) {
 	if len(authHeader) > 7 && authHeader[:7] == "Bearer " {
 		return "Bearer", authHeader[7:]
 	}
-	fmt.Println("got deviceId ", r.URL.Query().Get("deviceId"))
 	return "fromQuery", r.URL.Query().Get("deviceId")
 }
 
