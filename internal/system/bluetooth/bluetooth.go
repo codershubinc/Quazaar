@@ -1,4 +1,4 @@
-package system
+package bluetooth
 
 import (
 	"Quazaar/pkg/helpers"
