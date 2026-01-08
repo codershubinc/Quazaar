@@ -1,4 +1,4 @@
-package system
+package systemBrightness
 
 import (
 	"encoding/json"
@@ -6,21 +6,21 @@ import (
 	"net/http"
 )
 
-// HandleGetWiFiInfo handles GET /api/v0.1/system/wifi - returns WiFi information
-func HandleGetWiFiInfo(w http.ResponseWriter, r *http.Request) {
+// HandleGetBrightness handles GET /api/v0.1/system/brightness
+func HandleGetBrightness(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
-	wifiInfo, err := GetWiFiInfo()
+	br, err := GetCurrent()
 	if err != nil {
-		log.Printf("❌ Failed to get WiFi info: %v", err)
+		log.Printf("❌ Failed to get brightness: %v", err)
 		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusServiceUnavailable)
+		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]interface{}{
 			"success": false,
-			"error":   "Failed to get WiFi information",
+			"error":   "Failed to get brightness",
 			"message": err.Error(),
 		})
 		return
@@ -28,9 +28,7 @@ func HandleGetWiFiInfo(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]interface{}{
-		"success": true,
-		"wifi":    wifiInfo,
+		"success":    true,
+		"brightness": br,
 	})
-
-	log.Printf("✅ WiFi info retrieved: %s", wifiInfo.SSID)
 }
