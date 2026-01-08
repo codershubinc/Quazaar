@@ -10,6 +10,11 @@ import (
 	spotifyTrack "Quazaar/internal/spotify/track"
 	"Quazaar/internal/system"
 	systemBattery "Quazaar/internal/system/battery"
+	systemBluetooth "Quazaar/internal/system/bluetooth"
+	systemBrightness "Quazaar/internal/system/brightness"
+	systemSound "Quazaar/internal/system/sound"
+	systemVolume "Quazaar/internal/system/volume"
+	systemWakaTime "Quazaar/internal/system/wakatime"
 	"Quazaar/internal/websocket"
 	"bytes"
 	"embed"
@@ -75,7 +80,14 @@ func SetupRoutes(embedFS embed.FS) {
 	http.HandleFunc("/api/v0.1/player/previous", middleware.AuthenticationMiddleware(player.HandlePrevious))
 	// API v0.1 - System Info
 	http.HandleFunc("/api/v0.1/system/wifi", middleware.AuthenticationMiddleware(system.HandleGetWiFiInfo))
-	http.HandleFunc("/api/v0.1/system/bluetooth", middleware.AuthenticationMiddleware(system.HandleGetBluetoothDevices))
+	http.HandleFunc("/api/v0.1/system/bluetooth", middleware.AuthenticationMiddleware(systemBluetooth.HandleGetBluetoothDevices))
+	http.HandleFunc("/api/v0.1/system/volume", middleware.AuthenticationMiddleware(systemVolume.HandleGetVolume))
+	http.HandleFunc("/api/v0.1/system/brightness", middleware.AuthenticationMiddleware(systemBrightness.HandleGetBrightness))
+	http.HandleFunc("/api/v0.1/system/sound/devices", middleware.AuthenticationMiddleware(systemSound.HandleListDevices))
+	http.HandleFunc("/api/v0.1/system/sound/device", middleware.AuthenticationMiddleware(systemSound.HandleSetDevice))
+
+	// API v0.1 - WakaTime
+	http.HandleFunc("/api/v0.1/system/wakatime", middleware.AuthenticationMiddleware(systemWakaTime.HandleGetWakaTimeStats))
 
 	// API v0.1 - Spotify
 	http.HandleFunc("/api/v0.1/spotify/track/currently-playing", middleware.AuthenticationMiddleware(spotifyTrack.CurrentlyPlayingTrackApi))
