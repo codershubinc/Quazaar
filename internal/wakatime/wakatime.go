@@ -10,7 +10,7 @@ import (
 
 const WakaTimeBaseURL = "https://wakatime.com/api/v1/users/current/summaries?range=Today"
 
-func GetWakaTimeStats() (map[string]interface{}, error) {
+func GetWakaTimeStats() (map[string]any, error) {
 	apiKey := os.Getenv("WAKATIME_API_KEY")
 	if apiKey == "" {
 		return nil, fmt.Errorf("WAKATIME_API_KEY environment variable is not set")
