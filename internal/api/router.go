@@ -13,6 +13,7 @@ import (
 	systemBluetooth "Quazaar/internal/system/bluetooth"
 	systemBrightness "Quazaar/internal/system/brightness"
 	systemSound "Quazaar/internal/system/sound"
+	systemUsage "Quazaar/internal/system/usage"
 	systemVolume "Quazaar/internal/system/volume"
 	systemWakaTime "Quazaar/internal/wakatime"
 	"Quazaar/internal/websocket"
@@ -79,12 +80,17 @@ func SetupRoutes(embedFS embed.FS) {
 	http.HandleFunc("/api/v0.1/player/next", middleware.AuthenticationMiddleware(player.HandleNext))
 	http.HandleFunc("/api/v0.1/player/previous", middleware.AuthenticationMiddleware(player.HandlePrevious))
 	// API v0.1 - System Info
+	http.HandleFunc("/api/v0.1/system/info", middleware.AuthenticationMiddleware(system.HandleGetSystemInfo))
 	http.HandleFunc("/api/v0.1/system/wifi", middleware.AuthenticationMiddleware(system.HandleGetWiFiInfo))
 	http.HandleFunc("/api/v0.1/system/bluetooth", middleware.AuthenticationMiddleware(systemBluetooth.HandleGetBluetoothDevices))
 	http.HandleFunc("/api/v0.1/system/volume", middleware.AuthenticationMiddleware(systemVolume.HandleGetVolume))
 	http.HandleFunc("/api/v0.1/system/brightness", middleware.AuthenticationMiddleware(systemBrightness.HandleGetBrightness))
 	http.HandleFunc("/api/v0.1/system/sound/devices", middleware.AuthenticationMiddleware(systemSound.HandleListDevices))
 	http.HandleFunc("/api/v0.1/system/sound/device", middleware.AuthenticationMiddleware(systemSound.HandleSetDevice))
+
+	// API v0.1 - Usage
+	http.HandleFunc("/api/v0.1/system/usage", middleware.AuthenticationMiddleware(systemUsage.HandleGetSystemUsage))
+	http.HandleFunc("/api/v0.1/system/storage", middleware.AuthenticationMiddleware(systemUsage.HandleGetStorageUsage))
 
 	// API v0.1 - WakaTime
 	http.HandleFunc("/api/v0.1/system/wakatime", middleware.AuthenticationMiddleware(systemWakaTime.HandleGetWakaTimeStats))
