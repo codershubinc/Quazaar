@@ -1,6 +1,7 @@
 package usage
 
 import (
+	"Quazaar/internal/system/info/disk"
 	"testing"
 )
 
@@ -21,7 +22,7 @@ func TestGetSystemUsage(t *testing.T) {
 }
 
 func TestGetStorageUsage(t *testing.T) {
-	storage, err := GetStorageUsage()
+	storage, err := disk.GetDiskUsage()
 	if err != nil {
 		t.Fatalf("GetStorageUsage failed: %v", err)
 	}
