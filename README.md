@@ -1,3 +1,5 @@
+[![wakatime](https://wakatime.com/badge/user/c8cd0c53-219b-4950-8025-0e666e97e8c8/project/f142be36-57bc-4ff0-b09b-23a33739bd97.svg)](https://wakatime.com/badge/user/c8cd0c53-219b-4950-8025-0e666e97e8c8/project/f142be36-57bc-4ff0-b09b-23a33739bd97)
+
 # ⚡ Quazaar
 
 Real-time music player integration with WebSocket remote control for Linux.
