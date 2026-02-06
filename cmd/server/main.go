@@ -65,7 +65,7 @@ func main() {
 
 	port := os.Getenv("LOCAL_HOST_PORT_DEV")
 	if port == "" {
-		port = "8765"
+		port = "8766"
 	}
 
 	ip := os.Getenv("LOCAL_HOST_IP")

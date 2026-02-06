@@ -156,7 +156,11 @@ func next() (success bool, err error) {
 		return false, err
 	}
 
-	player := "org.mpris.MediaPlayer2.spotify"
+	player, err := findActivePlayer(dbusConn)
+	if err != nil {
+		fmt.Println("No active player found:", err)
+		return false, err
+	}
 	obj := dbusConn.Object(player, "/org/mpris/MediaPlayer2")
 	err = obj.Call("org.mpris.MediaPlayer2.Player.Next", 0).Store()
 	return err == nil, err
@@ -169,7 +173,11 @@ func previous() (success bool, err error) {
 		return false, err
 	}
 
-	player := "org.mpris.MediaPlayer2.spotify"
+	player, err := findActivePlayer(dbusConn)
+	if err != nil {
+		fmt.Println("No active player found:", err)
+		return false, err
+	}
 	obj := dbusConn.Object(player, "/org/mpris/MediaPlayer2")
 	err = obj.Call("org.mpris.MediaPlayer2.Player.Previous", 0).Store()
 	return err == nil, err
@@ -182,7 +190,11 @@ func playPause() (success bool, err error) {
 		return false, err
 	}
 
-	player := "org.mpris.MediaPlayer2.spotify"
+	player, err := findActivePlayer(dbusConn)
+	if err != nil {
+		fmt.Println("No active player found:", err)
+		return false, err
+	}
 	obj := dbusConn.Object(player, "/org/mpris/MediaPlayer2")
 	err = obj.Call("org.mpris.MediaPlayer2.Player.PlayPause", 0).Store()
 	return err == nil, err
@@ -195,7 +207,12 @@ func seekForward() (success bool, err error) {
 		return false, err
 	}
 
-	player := "org.mpris.MediaPlayer2.spotify"
+	player, err := findActivePlayer(dbusConn)
+	if err != nil {
+		fmt.Println("No active player found:", err)
+		return false, err
+	}
+
 	obj := dbusConn.Object(player, "/org/mpris/MediaPlayer2")
 	err = obj.Call("org.mpris.MediaPlayer2.Player.Seek", 0, int64(5000000)).Store()
 	return err == nil, err
@@ -208,7 +225,11 @@ func seekBackward() (success bool, err error) {
 		return false, err
 	}
 
-	player := "org.mpris.MediaPlayer2.spotify"
+	player, err := findActivePlayer(dbusConn)
+	if err != nil {
+		fmt.Println("No active player found:", err)
+		return false, err
+	}
 	obj := dbusConn.Object(player, "/org/mpris/MediaPlayer2")
 	err = obj.Call("org.mpris.MediaPlayer2.Player.Seek", 0, int64(-5000000)).Store()
 	return err == nil, err
@@ -220,7 +241,11 @@ func seekToPosition(position int64) (success bool, err error) {
 		fmt.Println("Error connecting to D-Bus:", err)
 		return false, err
 	}
-	player := "org.mpris.MediaPlayer2.spotify"
+	player, err := findActivePlayer(dbusConn)
+	if err != nil {
+		fmt.Println("No active player found:", err)
+		return false, err
+	}
 	obj := dbusConn.Object(player, "/org/mpris/MediaPlayer2")
 	err = obj.Call("org.mpris.MediaPlayer2.Player.SetPosition", 0, dbus.ObjectPath("/org/mpris/MediaPlayer2/TrackList/NoTrack"), position).Store()
 	return err == nil, err
@@ -232,7 +257,10 @@ func setVolume(volume int) (success bool, err error) {
 		return false, err
 	}
 
-	player := "org.mpris.MediaPlayer2.spotify"
+	player, err := findActivePlayer(dbusConn)
+	if err != nil {
+		return false, err
+	}
 	obj := dbusConn.Object(player, "/org/mpris/MediaPlayer2")
 
 	// FIX: Volume is a Property, so we use SetProperty, not Call
@@ -251,7 +279,6 @@ var LinuxDBusPlayer = models.PlayerFunctions{
 	SeekTo:                   seekToPosition,
 	SetVolume:                setVolume,
 	GetCurrentPlayerMetadata: getMetadata,
-	// for now just focus on spotify buddy ..........
 	GetAllPlayers: func() ([]string, error) {
 		conn, err := GetDBusConnection()
 		if err != nil {
