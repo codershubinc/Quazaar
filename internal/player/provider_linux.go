@@ -46,8 +46,7 @@ func findActivePlayer(conn *dbus.Conn) (string, error) {
 
 	var pausedPlayer string
 	var spotifyPlayer string
-
-	// Priority: Playing > Paused > Spotify > Stopped
+	
 	for _, player := range players {
 		if strings.Contains(strings.ToLower(player), "spotify") {
 			spotifyPlayer = player
