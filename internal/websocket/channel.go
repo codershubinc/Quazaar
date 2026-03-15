@@ -16,7 +16,7 @@ type Client struct {
 
 var (
 	clients   = make(map[string]*Client)
-	clientsMu sync.RWMutex
+	clientsMu sync.RWMutex     
 )
 
 // RegisterClient adds a new client to the broadcast list
@@ -57,12 +57,12 @@ func CleanClientBuffer(clientID string) {
 			// Channel is empty
 			log.Printf("🧹 Cleaned buffer for client %s", clientID)
 			return
-		}
+		}   
 	}
 }
 
-// CleanAllBuffers drains all pending messages from all clients
-func CleanAllBuffers() {
+
+func CleanAllBuffers() { 
 	clientsMu.RLock()
 	defer clientsMu.RUnlock()
 

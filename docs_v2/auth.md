@@ -21,6 +21,16 @@
 }
 ```
 
+**Example cURL:**
+```bash
+curl -X POST http://localhost:8766/api/v0.1/signup \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "user123",
+    "password": "pass123"
+  }'
+```
+
 ## `/api/v0.1/login` [POST]
 
 **Description:** Authenticates a user and returns a session token.
@@ -42,6 +52,16 @@
   "token": "a1b2c3d4e5f6...",
   "tokenType": "deviceId"
 }
+```
+
+**Example cURL:**
+```bash
+curl -X POST http://localhost:8766/api/v0.1/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "user123",
+    "password": "pass123"
+  }'
 ```
 
 ## `/api/v0.1/auth/refresh` [POST]
