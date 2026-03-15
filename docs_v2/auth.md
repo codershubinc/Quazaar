@@ -5,14 +5,16 @@
 **Description:** Registers a new user with the system.
 
 **Required Body (JSON):**
+
 ```json
 {
-  "username": "user123",  // Min 3 chars
-  "password": "pass123"   // Min 6 chars
+  "username": "user123", // Min 3 chars
+  "password": "pass123" // Min 6 chars
 }
 ```
 
 **Response Data (JSON):**
+
 ```json
 {
   "success": true,
@@ -22,6 +24,7 @@
 ```
 
 **Example cURL:**
+
 ```bash
 curl -X POST http://localhost:8766/api/v0.1/signup \
   -H "Content-Type: application/json" \
@@ -36,6 +39,7 @@ curl -X POST http://localhost:8766/api/v0.1/signup \
 **Description:** Authenticates a user and returns a session token.
 
 **Required Body (JSON):**
+
 ```json
 {
   "username": "user123",
@@ -44,6 +48,7 @@ curl -X POST http://localhost:8766/api/v0.1/signup \
 ```
 
 **Response Data (JSON):**
+
 ```json
 {
   "success": true,
@@ -55,6 +60,7 @@ curl -X POST http://localhost:8766/api/v0.1/signup \
 ```
 
 **Example cURL:**
+
 ```bash
 curl -X POST http://localhost:8766/api/v0.1/login \
   -H "Content-Type: application/json" \
@@ -69,6 +75,7 @@ curl -X POST http://localhost:8766/api/v0.1/login \
 **Description:** Refreshes an existing authentication token.
 
 **Required Body (JSON):**
+
 ```json
 {
   "token": "old_token_string"
@@ -76,6 +83,7 @@ curl -X POST http://localhost:8766/api/v0.1/login \
 ```
 
 **Response Data (JSON):**
+
 ```json
 {
   "success": true,
@@ -90,6 +98,7 @@ curl -X POST http://localhost:8766/api/v0.1/login \
 **Description:** Changes the password for the authenticated user.
 
 **Required Body (JSON):**
+
 ```json
 {
   "token": "current_valid_token",
@@ -99,6 +108,7 @@ curl -X POST http://localhost:8766/api/v0.1/login \
 ```
 
 **Response Data (JSON):**
+
 ```json
 {
   "success": true,
@@ -111,10 +121,12 @@ curl -X POST http://localhost:8766/api/v0.1/login \
 **Description:** Retrieves information about the currently authenticated user.
 
 **Required Headers:**
+
 - `Authorization`: `Bearer <token>`
 - OR Query Param: `?token=<token>`
 
 **Response Data (JSON):**
+
 ```json
 {
   "success": true,
@@ -132,6 +144,7 @@ curl -X POST http://localhost:8766/api/v0.1/login \
 **Description:** Logs out the user by invalidating the provided token.
 
 **Required Body (JSON):**
+
 ```json
 {
   "token": "token_to_invalidate"
@@ -139,6 +152,7 @@ curl -X POST http://localhost:8766/api/v0.1/login \
 ```
 
 **Response Data (JSON):**
+
 ```json
 {
   "success": true,
@@ -151,10 +165,12 @@ curl -X POST http://localhost:8766/api/v0.1/login \
 **Description:** Lists all active tokens for the user.
 
 **Required Headers:**
+
 - `Authorization`: `Bearer <token>`
 - OR Query Param: `?token=<token>`
 
 **Response Data (JSON):**
+
 ```json
 {
   "success": true,
