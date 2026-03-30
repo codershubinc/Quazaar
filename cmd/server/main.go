@@ -24,9 +24,7 @@ func main() {
 	}
 
 	//temp:
-	log.Printf("OS type is %s", runtime.GOOS)
-	// Display startup banner
-	// Options: banner.Variant1(), banner.Variant2(), banner.Variant3(), banner.Variant4()
+	log.Printf("OS type is %s", runtime.GOOS) 
 	banner.Show()
 
 	// Initialize database
@@ -65,7 +63,7 @@ func main() {
 
 	port := os.Getenv("LOCAL_HOST_PORT_DEV")
 	if port == "" {
-		port = "8766"
+		port = "8765"
 	}
 
 	ip := os.Getenv("LOCAL_HOST_IP")
