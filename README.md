@@ -74,6 +74,39 @@ For the complete project documentation, including architecture, development jour
 
 The server will start on `ws://0.0.0.0:8765/ws` (default).
 
+### 🐳 Docker Quick Start
+
+You can run Quazaar in a containerized environment using Docker.
+
+#### 1. Using Docker Compose (Recommended)
+
+Make sure you have your `.env` configured (copy `.env.example` to `.env` and fill in details if using Spotify/WakaTime integrations), then run:
+
+```bash
+# Build and start the container in detached mode
+docker compose up -d
+
+# View container logs
+docker compose logs -f
+```
+
+This maps port `8765` to the host, automatically loads your `.env` variables, and creates a local `./data` folder to persist your SQLite database.
+
+#### 2. Using Docker CLI
+
+```bash
+# Build the Docker image
+docker build -t quazaar .
+
+# Run the container with persistent storage and port exposure
+docker run -d \
+  -p 8765:8765 \
+  -v $(pwd)/data:/home/quazaar/.quazaar \
+  --env-file .env \
+  --name quazaar-server \
+  quazaar
+```
+
 ## 📂 Where to look next
 
 - **[docs/PROJECT_DOCUMENTATION.md](docs/PROJECT_DOCUMENTATION.md)** — **Start Here!** Full project overview and journey.

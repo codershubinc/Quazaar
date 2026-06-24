@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  quazaar:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: quazaar-server
+    ports:
+      - "8765:8765"
+    volumes:
+      # Persist the database locally in a ./data folder
+      - ./data:/home/quazaar/.quazaar
+    # Load environment variables from a .env file if it exists
+    env_file:
+      - .env
+    environment:
+      - LOCAL_HOST_IP=0.0.0.0
+      - LOCAL_HOST_PORT_DEV=8765
+    # Restart policy
+    restart: unless-stopped
